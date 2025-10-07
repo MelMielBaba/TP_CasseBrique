@@ -9,3 +9,7 @@ Titre: Fichier principal du jeu
 #Importation des fichiers
 import TP4_Fenetre as F
 import TP4_Balle as B
+
+#Creation des objets
+J_Balle = B.Balle()
+J_Fenetre_principale = F.Fenetre_principale()
