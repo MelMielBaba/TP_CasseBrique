@@ -13,3 +13,5 @@ import TP4_Balle as B
 #Creation des objets
 J_Balle = B.Balle()
 J_Fenetre_principale = F.Fenetre_principale()
+J_Fenetre_jeu = F.Fenetre_jeu()
+J_Fenetre_option = F.Fenetre_option()
