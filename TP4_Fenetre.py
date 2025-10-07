@@ -2,7 +2,7 @@
 """
 Date de creation : 7 octobre 2025
 Auteurs: Marie Louise MILLIEN & Elouen WURMSER
-Projet: TP4 - Casse-Brique
+Projet: TP4 - CasseBrique
 Titre: Fichier des Fenetres
 """
 
@@ -27,6 +27,12 @@ TO DO :
     modifier là}
     - {Creer une classe Manager_fenetres() pour les gestions des fenetres, car c'est 
     bizarre que la mere appelle ses filles dans ses methodes}
+    - Verifier que Fenetre_jeu() verifie les points suivant:
+        • Un canevas (zone principale du jeu)
+        • Une zone de texte affichant le score
+        • Un bouton permettant de démarrer une partie
+        • Un bouton permettant de quitter le jeu proprement
+        • Un menu avec différentes options
 """
 
 #Importation des modules

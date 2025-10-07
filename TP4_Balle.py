@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Date de creation : 7 octobre 2025
-Auteur: Marie Louise MILLIEN & Elouen WURMSER
-Projet: TP4 - Casse-Brique
-Titre: Fichier de la classe Balle
+Auteurs: Marie Louise MILLIEN & Elouen WURMSER
+Projet: TP4 - CasseBrique
+Titre: Fichier de la Balle
 """
 
 #Importation des modules
