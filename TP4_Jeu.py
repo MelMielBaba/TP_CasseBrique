@@ -3,9 +3,9 @@
 Date de creation : 7 octobre 2025
 Auteur: Marie Louise MILLIEN & Elouen WURMSER
 Projet: TP4 - Casse-Brique
-Titre: Fichier de la Fenetre
+Titre: Fichier principal du jeu
 """
 
-#Importation des modules
-import tkinter as tk
-
+#Importation des fichiers
+import TP4_Fenetre as F
+import TP4_Balle as B
