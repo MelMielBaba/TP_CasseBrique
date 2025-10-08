@@ -5,182 +5,121 @@ Auteur: Marie Louise MILLIEN & Elouen WURMSER
 Projet: TP4 - Casse-Brique
 Fichier : Fenetre (interface graphique Tkinter)
 
-Ce fichier implémente la classe principale App qui gère la navigation entre les 3 écrans:
-- FenetreDemarrage : écran de démarrage avec les boutons Jouer, Option, Quitter
-- FenetreOption : écran des options
-- FenetreJeu : écran contenant le canvas de jeu et le score
-
-
-Les transitions entre les fenetres sont réalisées en détruisant la frenetre courante
-puis en créant la suivante.
+Ce fichier implémente la classe principale App qui gère la navigation entre les 3 fenetres:
+- FenetreDemarrage : fenetre de démarrage avec les boutons Jouer, Option, Quitter
+- FenetreOption : fenetre des options
+- FenetreJeu : fentre contenant le canvas de jeu et le score
 
 """
 
-#Importation des modules
+
 import tkinter as tk
+from tkinter import ttk
 
-class App:
-    """Classe principale qui gère les fenêtres
-Attributs :
-root (tk.Tk) : la fenêtre principale Tkinter
-start_frame correspond à la FenetreDemarrage : La fenetre de demarrage
-second_menu_frame correspond à la FenetreOption : La fenetre des options
-third_menu_frame correspond à la FenetreJeu : La fenetre de jeu)
-"""
-
-    def __init__(self, root):
-        #Initialisation de l'application.
-        self.root = root
-        self.root.geometry("400x400")
-        self.creation_fenetre_demarrage()
- 
-    def creation_fenetre_demarrage(self):
-        """Crée et affiche l'écran de démarrage.
+# --- Constantes ---
+WINDOW_WIDTH = 1000
+WINDOW_HEIGHT = 650
+CANVAS_WIDTH = 1000
+CANVAS_HEIGHT = 500
+APP_TITLE = "Casse Brique"
 
 
-La méthode instancie FenetreDemarrage, lie les boutons aux méthodes de 
-app pour naviguer vers les autres écrans, puis affiche la fenetre avec pack().
-        """
-        self.start_frame = FenetreDemarrage(self.root, self)
-        self.start_frame.btn_option.bind('<Button-1>', self.creation_fenetre_option)
-        self.start_frame.btn_jouer.bind('<Button-1>', self.creation_fenetre_jeu)
-        self.start_frame.pack()
- 
-    def creation_fenetre_option(self, event=None):
-        """Transition vers la fenetre des options.
+class App(tk.Tk):
+    """Application principale — contrôleur des fenetres.
+
+    Les fenetres sont créés une seule fois et contenu dans un conteneur. 
+    On affiche la fenetre désiré via show_frame(name).
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.title(APP_TITLE)
+        self.resizable(False, False)
+
+        # Conteneur qui recoit toutes les fenetres
+        container = ttk.Frame(self)
+        container.pack(fill="both", expand=True)
+
+        # Dictionnaire des fenetres 
+        self.frames: Dict[str, tk.Frame] = {}
+
+        # création des fenetres
+        for F in (FenetreDemarrage, FenetreOption, FenetreJeu):
+            frame = F(parent=container, app=self)
+            self.frames[F.__name__] = frame
+            # on place toutes les fenetres au même endroit; on les affiche via tkraise
+            frame.grid(row=0, column=0, sticky="nsew")
+
+        # Affiche la fenetre de démarrage
+        self.show_frame("FenetreDemarrage")
+
+    def show_frame(self, name: str):
+        """Affiche la frame identifiée par son nom (clé du dict frames)."""
+        frame = self.frames.get(name)
+        frame.tkraise()
 
 
-Paramètre event : reçu quand la méthode est appelée via bind. Permet à la
-meme fonction d'être utilisée comme retour d'appel.
-        """
-        self.start_frame.destroy()
-        self.second_menu_frame = FenetreOption(self.root, self)
-        self.second_menu_frame.pack()
-    
-    def creation_fenetre_jeu(self, event=None):
-        """Transition vers la fenetre de jeu.
+class FenetreDemarrage(ttk.Frame):
+    """fenetre de démarrage avec boutons Jouer / Option / Quitter."""
 
-
-Paramètre event : reçu quand la méthode est appelée via bind. Permet à la
-meme fonction d'être utilisée comme retour d'appel.
-        """
-        self.start_frame.destroy()       
-        self.third_menu_frame = FenetreJeu(self.root, self)
-        self.third_menu_frame.pack()
-    
-    def retour_demarrage_option(self):
-        """Retour au menu de démarrage depuis la fenetre d'options.
-        C'est la fonction d'appel du bouton retour de la fenetre d'options
-        """
-        self.second_menu_frame.destroy()
-        self.creation_fenetre_demarrage()
-
-    def retour_demarrage_jeu(self):
-        """Retour au menu de démarrage depuis la fenetre de jeu.
-        C'est la fonction d'appel du bouton retour de la fenetre de jeu
-        """
-        self.third_menu_frame.destroy()
-        self.creation_fenetre_demarrage()
- 
- 
-class FenetreDemarrage(tk.Frame):
-    # La fenetre de demarrage, afficher en premier lors du lancement
-    def __init__(self, parent, app):
-        super().__init__(parent)
+    def __init__(self, parent: tk.Widget, app: App):
+        super().__init__(parent, padding=20)
         self.app = app
-        
-        # Affichage du nom de la fenetre
-        tk.Label(self, 
-                 text='Casse Brique', 
-                 font=("Arial", 20, "bold")).pack(pady=20)
 
-        # LES BOUTONS
-        # Creation du bouton de jeu
-        self.btn_jouer = tk.Button(self, text="Jouer")
-        self.btn_jouer.pack(pady=10)
+        ttk.Label(self, text=APP_TITLE, font=("Arial", 24, "bold")).pack(pady=20)
 
-        # Creation du bouton des options
-        self.btn_option = tk.Button(self, text="Option")
-        self.btn_option.pack(pady=10)
+        ttk.Button(self, text="Jouer", command=lambda: app.show_frame("FenetreJeu")).pack(pady=10)
+        ttk.Button(self, text="Options", command=lambda: app.show_frame("FenetreOption")).pack(pady=10)
+        ttk.Button(self, text="Quitter", command=app.destroy).pack(pady=10)
 
-        # Bouton pour quitter l'application
-        self.btn_quitter = tk.Button(self, 
-                                     text="Quitter", 
-                                     command=app.root.destroy) # arrete le programme en cours
-        self.btn_quitter.pack(pady=10)
- 
- 
-class FenetreOption(tk.Frame):
-    # La fenetre des options
-    def __init__(self, parent, app):
+
+class FenetreOption(ttk.Frame):
+    """fenetre des options"""
+
+    def __init__(self, parent: tk.Widget, app: App):
+        super().__init__(parent, padding=20)
+        self.app = app
+
+        ttk.Label(self, text="Options", font=("Arial", 20, "bold")).pack(pady=20)
+
+        # Exemples d'options (placeholders) — à remplacer par de vrais contrôles
+        ttk.Button(self, text="Option 1 (WIP)").pack(pady=6)
+        ttk.Button(self, text="Option 2 (WIP)").pack(pady=6)
+
+        ttk.Button(self, text="Retour", command=lambda: app.show_frame("FenetreDemarrage")).pack(pady=12)
+
+
+class FenetreJeu(ttk.Frame):
+    """fenetre du jeu contenant le canvas et la barre de score.
+
+    Exemple minimal pour la gestion du score et des boutons.
+    """
+
+    def __init__(self, parent: tk.Widget, app: App):
         super().__init__(parent)
         self.app = app
 
-        # Nom de la fenetre 
-        tk.Label(self, 
-                 text='Options', 
-                 font=("Arial", 20, "bold")).pack(pady=20)
-        
-        # Bouton des options
-        # OPTION 1
-        self.btn_option1 = tk.Button(self, text="WIP")
-        self.btn_option1.pack(pady=10)
+        # Barre du haut (score)
+        top_bar = ttk.Frame(self, padding=(8, 8))
+        top_bar.pack(fill="x")
 
-        # Bouton du retour au menu de demarrage
-        self.btn_retour = tk.Button(self, text="Retour", 
-                                    command=app.retour_demarrage_option) #Voir fonction dans app
-        self.btn_retour.pack(pady=10)
- 
-
-class FenetreJeu(tk.Frame):
-    # La fenetre de jeu ici, elle contient le jeu casse brique
-    def __init__(self, parent, app):
-        super().__init__(parent)
-        self.app = app
-        
-        # initialisation de la bare du haut
-        self.top_bar = tk.Frame(self)
-        self.top_bar.pack(fill="x", pady=5, padx=5)
-
-        # Initialisation de la bare du bas
-        self.bottom_bar= tk.Frame(self)
-        self.bottom_bar.pack(side="bottom", fill="both", expand=True)
-
-        # Bouton pour quitter l'application
-        self.btn_quitter = tk.Button(self.bottom_bar, # Bouton retour est dans la bare du bas
-                                     text="Quitter", #Texte
-                                     command=app.root.destroy) # Voir fonction dans app
-        self.btn_quitter.pack(side="left", padx=5, pady=5)
-
-        # Bouton du retour au menu de démarrage
-        self.btn_retour = tk.Button(self.bottom_bar, # Bouton retour est dans la bare du bas
-                                    text="Retour", #Texte
-                                    command=app.retour_demarrage_jeu) # Voir fonction dans app
-        self.btn_retour.pack(side="left", 
-                             padx=5, 
-                             pady=5)
-
-        # Affichage du canvas
-        self.canvas = tk.Canvas(self, 
-                                width=1000, #Largeur
-                                height=500, #Hauteur
-                                bg="black") #Couleur
-        self.canvas.pack()
-
-        #  Affichage du score
+        # Variable de score
         self.score = 0
         self.score_var = tk.StringVar(value=f"Score : {self.score}")
-        self.score_label = tk.Label(self.top_bar,  # SCORE est dans la bare du haut
-                                    textvariable=self.score_var, # Affichage du texte variable
-                                    font=("Arial", 12, "bold"))  # Personalisation
-        
-        self.score_label.pack(side="left", 
-                              padx=10)
+        ttk.Label(top_bar, textvariable=self.score_var, font=("Arial", 12, "bold")).pack(side="left", padx=8)
+
+        # Boutons basiques (Quitter / Retour)
+        bottom_bar = ttk.Frame(self, padding=(8, 8))
+        bottom_bar.pack(side="bottom", fill="x")
+
+        ttk.Button(bottom_bar, text="Retour", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
+        ttk.Button(bottom_bar, text="Quitter", command=app.destroy).pack(side="left", padx=6)
+
+        # Canvas de jeu
+        self.canvas = tk.Canvas(self, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg="black")
+        self.canvas.pack(pady=6)
 
 
-# Démarrage de l'application
 if __name__ == "__main__":
-    root = tk.Tk()
-    main = App(root)
-    root.mainloop()
-
+    app = App()
+    app.mainloop()
