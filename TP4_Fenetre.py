@@ -3,7 +3,7 @@
 Date de creation : 7 octobre 2025
 Auteur: Marie Louise MILLIEN & Elouen WURMSER
 Projet: TP4 - Casse-Brique
-Fichier : Fenetre (interface graphique Tkinter)
+Fichier : Fenetre 
 
 Ce fichier implémente la classe principale App qui gère la navigation entre les 3 fenetres:
 - FenetreDemarrage : fenetre de démarrage avec les boutons Jouer, Option, Quitter
@@ -15,6 +15,8 @@ Ce fichier implémente la classe principale App qui gère la navigation entre le
 
 import tkinter as tk
 from tkinter import ttk
+# on utilise ttk pour avoir une interface plus belle
+
 
 # --- Constantes ---
 WINDOW_WIDTH = 1000
@@ -25,10 +27,10 @@ APP_TITLE = "Casse Brique"
 
 
 class App(tk.Tk):
-    """Application principale — contrôleur des fenetres.
+    """Application principale
 
-    Les fenetres sont créés une seule fois et contenu dans un conteneur. 
-    On affiche la fenetre désiré via show_frame(name).
+    Les fenetres sont créés en une seule fois et contenu dans un conteneur
+    On affiche la fenetre désiré via la fonction show_frame(NomFenetre)
     """
 
     def __init__(self):
@@ -47,30 +49,38 @@ class App(tk.Tk):
         for F in (FenetreDemarrage, FenetreOption, FenetreJeu):
             frame = F(parent=container, app=self)
             self.frames[F.__name__] = frame
-            # on place toutes les fenetres au même endroit; on les affiche via tkraise
+            # on place toutes les fenetres au même endroit et on les affiche via tkraise
             frame.grid(row=0, column=0, sticky="nsew")
 
         # Affiche la fenetre de démarrage
         self.show_frame("FenetreDemarrage")
 
     def show_frame(self, name: str):
-        """Affiche la frame identifiée par son nom (clé du dict frames)."""
+        """Affiche la frame identifiée par son nom cad la clé du dictionnaire frames"""
         frame = self.frames.get(name)
         frame.tkraise()
 
 
 class FenetreDemarrage(ttk.Frame):
-    """fenetre de démarrage avec boutons Jouer / Option / Quitter."""
+    """fenetre de démarrage avec boutons Jouer / Option / Quitter"""
 
     def __init__(self, parent: tk.Widget, app: App):
         super().__init__(parent, padding=20)
         self.app = app
 
-        ttk.Label(self, text=APP_TITLE, font=("Arial", 24, "bold")).pack(pady=20)
+        ttk.Label(self, 
+                  text=APP_TITLE, 
+                  font=("Arial", 24, "bold")).pack(pady=20)
 
-        ttk.Button(self, text="Jouer", command=lambda: app.show_frame("FenetreJeu")).pack(pady=10)
-        ttk.Button(self, text="Options", command=lambda: app.show_frame("FenetreOption")).pack(pady=10)
-        ttk.Button(self, text="Quitter", command=app.destroy).pack(pady=10)
+        ttk.Button(self, 
+                   text="Jouer", 
+                   command=lambda: app.show_frame("FenetreJeu")).pack(pady=10)
+        ttk.Button(self, 
+                   text="Options", 
+                   command=lambda: app.show_frame("FenetreOption")).pack(pady=10)
+        ttk.Button(self, 
+                   text="Quitter", 
+                   command=app.destroy).pack(pady=10)
 
 
 class FenetreOption(ttk.Frame):
@@ -80,20 +90,23 @@ class FenetreOption(ttk.Frame):
         super().__init__(parent, padding=20)
         self.app = app
 
-        ttk.Label(self, text="Options", font=("Arial", 20, "bold")).pack(pady=20)
+        ttk.Label(self, 
+                  text="Options", 
+                  font=("Arial", 20, "bold")).pack(pady=20)
 
-        # Exemples d'options (placeholders) — à remplacer par de vrais contrôles
-        ttk.Button(self, text="Option 1 (WIP)").pack(pady=6)
-        ttk.Button(self, text="Option 2 (WIP)").pack(pady=6)
+        # Exemples d'options
+        ttk.Button(self, 
+                   text="Option 1 (WIP)").pack(pady=6)
+        ttk.Button(self, 
+                   text="Option 2 (WIP)").pack(pady=6)
 
-        ttk.Button(self, text="Retour", command=lambda: app.show_frame("FenetreDemarrage")).pack(pady=12)
+        ttk.Button(self, 
+                   text="Retour", 
+                   command=lambda: app.show_frame("FenetreDemarrage")).pack(pady=12)
 
 
 class FenetreJeu(ttk.Frame):
-    """fenetre du jeu contenant le canvas et la barre de score.
-
-    Exemple minimal pour la gestion du score et des boutons.
-    """
+    """fenetre du jeu contenant le canvas et la barre de score"""
 
     def __init__(self, parent: tk.Widget, app: App):
         super().__init__(parent)
@@ -106,17 +119,26 @@ class FenetreJeu(ttk.Frame):
         # Variable de score
         self.score = 0
         self.score_var = tk.StringVar(value=f"Score : {self.score}")
-        ttk.Label(top_bar, textvariable=self.score_var, font=("Arial", 12, "bold")).pack(side="left", padx=8)
+        ttk.Label(top_bar, 
+                  textvariable=self.score_var, 
+                  font=("Arial", 12, "bold")).pack(side="left", padx=8)
 
         # Boutons basiques (Quitter / Retour)
         bottom_bar = ttk.Frame(self, padding=(8, 8))
         bottom_bar.pack(side="bottom", fill="x")
 
-        ttk.Button(bottom_bar, text="Retour", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
-        ttk.Button(bottom_bar, text="Quitter", command=app.destroy).pack(side="left", padx=6)
+        ttk.Button(bottom_bar, 
+                   text="Retour", 
+                   command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
+        ttk.Button(bottom_bar, 
+                   text="Quitter", 
+                   command=app.destroy).pack(side="left", padx=6)
 
         # Canvas de jeu
-        self.canvas = tk.Canvas(self, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg="black")
+        self.canvas = tk.Canvas(self, 
+                                width=CANVAS_WIDTH, 
+                                height=CANVAS_HEIGHT, 
+                                bg="black")
         self.canvas.pack(pady=6)
 
 
