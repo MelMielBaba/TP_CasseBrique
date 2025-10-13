@@ -46,61 +46,7 @@ Nouvelle structure:
 #Importation des modules
 import tkinter as tk
 
-class Fenetre:
-    """
-    Description : Classe Mere des fenetres du jeu
-    Attributs :
-        - fenetre_racine : creation d'une fenetre TKinter via tk.Tk()
-    Methodes :
-        -
-    """
-    def __init__(self,nom_fenetre):
-
-        # --- Constantes ---
-        self.f_fenetre_width = 1000
-        self.f_fenetre_height = 650
-        self.f_canevas_width = 900
-        self.f_canevas_height = 500
-        self.f_titre = "Casse Brique"
-
-        #creation de la fenetre graphique
-        self.f_fenetre_racine = tk.Tk()
-        #taille de la fenetre
-        self.f_fenetre_racine.geometry(f"{self.f_fenetre_width}x{self.f_fenetre_height}")
-        #nom de la fenetre
-        self.__f_nom_fenetre = nom_fenetre 
-        #affichage du nom de la fenetre
-        self.f_fenetre_racine.title(self.f_titre)
-
-
-    
-    def f_afficher_fenetre(self):
-        """
-        Fonction : Ouvrir/Afficher la fenetre tkinter
-        Entree : self
-        Sortie : None
-        """
-        self.f_fenetre_racine.mainloop()
-
-    def f_fermer_fenetre(self):
-        """
-        Fonction : Fermer la fenetre tkinter
-        Entree : self
-        Sortie : None
-        """
-        self.f_fenetre_racine.destroy()
-    
-    def get_nom_fenetre(self):
-        return self.__f_nom_fenetre
-    
-    def get_canevas_height(self):
-        return self.f_canevas_height
-    
-    def get_canevas_width(self):
-        return self.f_canevas_width
-
-
-class Manager_fenetres(Fenetre):
+class Manager_fenetres:
     """
     Description : Gere les differentes fenetres
     Attributs :
@@ -113,14 +59,17 @@ class Manager_fenetres(Fenetre):
         -
     """
     def __init__(self):
-        super().__init__(None)
+        #Creation d'une fenetre tkinter dans laquelle evolue les ecrans
+        self.mf_fenetre_racine = tk.Tk()
+        self.mf_fenetre_racine.title("Casse Brique")
+
+        #Creation d'un container de tkinter
+        self.mf_container = tk.Frame(self.mf_fenetre_racine)
+        self.mf_container.pack(fill = "both", expand = True)
+
         #Stockage des fentetres dans un dictionnaire
         self.mf_stock_fenetre = dict() 
         self.mf_fenetre_courante = "Fenetre principale"
-
-        #Creation d'un container de tkinter
-        self.mf_container = tk.Frame(self.f_fenetre_racine)
-        self.mf_container.pack(fill = "both", expand = True)
 
     def ajouter_nouvelle_fenetre(self,anf_nom_fenetre:str):
         """
@@ -158,6 +107,60 @@ class Manager_fenetres(Fenetre):
     def get_fenetre(self,gf_nom_fenetre):
         return self.mf_stock_fenetre[gf_nom_fenetre]
 
+class Fenetre(tk.Frame):
+    """
+    Description : Classe Mere des fenetres du jeu
+    Attributs :
+        - fenetre_racine : creation d'une fenetre TKinter via tk.Tk()
+    Methodes :
+        -
+    """
+    def __init__(self,nom_fenetre):
+        #Heritage
+        super().__init__(self)
+
+        # --- Constantes ---
+        self.f_fenetre_width = 1000
+        self.f_fenetre_height = 650
+        self.f_canevas_width = 900
+        self.f_canevas_height = 500
+        self.f_titre = "Casse Brique"
+
+        #creation de la fenetre graphique
+        self.f_fenetre_racine = tk.Tk()
+        #taille de la fenetre
+        self.f_fenetre_racine.geometry(f"{self.f_fenetre_width}x{self.f_fenetre_height}")
+        #nom de la fenetre
+        self.__f_nom_fenetre = nom_fenetre 
+        #affichage du nom de la fenetre
+        self.f_fenetre_racine.title(self.f_titre)
+
+
+    def f_afficher_fenetre(self):
+        """
+        Fonction : Ouvrir/Afficher la fenetre tkinter
+        Entree : self
+        Sortie : None
+        """
+        self.f_fenetre_racine.mainloop()
+
+    def f_fermer_fenetre(self):
+        """
+        Fonction : Fermer la fenetre tkinter
+        Entree : self
+        Sortie : None
+        """
+        self.f_fenetre_racine.destroy()
+    
+    def get_nom_fenetre(self):
+        return self.__f_nom_fenetre
+    
+    def get_canevas_height(self):
+        return self.f_canevas_height
+    
+    def get_canevas_width(self):
+        return self.f_canevas_width
+
 
 class Fenetre_principale(Fenetre):
     """
@@ -171,7 +174,7 @@ class Fenetre_principale(Fenetre):
         -
     """
     def __init__(self):
-        super().__init__("Fenetre principale")
+        super().__init__()
         
         
         #Affichage du titre de la fenetre
