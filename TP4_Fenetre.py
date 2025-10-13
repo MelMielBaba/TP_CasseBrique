@@ -36,10 +36,17 @@ TO DO :
         • Un menu avec différentes options
 """
 
+"""
+Nouvelle structure:
+-Manager_fenetre -> herite de personne creer la fenetre et gere les ecran(frames)
+-Fenetre -> heite de frame et implemente les methode commune au ecrans filles
+-Les fenetre -> herite dde fenetre et definisse des methodes plus specifique
+"""
+
 #Importation des modules
 import tkinter as tk
 
-class Fenetre(tk.Tk):
+class Fenetre:
     """
     Description : Classe Mere des fenetres du jeu
     Attributs :
@@ -48,13 +55,6 @@ class Fenetre(tk.Tk):
         -
     """
     def __init__(self,nom_fenetre):
-        super().__init__()
-        #creation de la fenetre graphique
-        self.f_fenetre_racine = tk.Tk()
-        #taille de la fenetre
-        self.f_fenetre_racine.geometry("400x400")
-        #nom de la fenetre
-        self.__f_nom_fenetre = nom_fenetre 
 
         # --- Constantes ---
         self.f_fenetre_width = 1000
@@ -62,17 +62,42 @@ class Fenetre(tk.Tk):
         self.f_canevas_width = 900
         self.f_canevas_height = 500
         self.f_titre = "Casse Brique"
+
+        #creation de la fenetre graphique
+        self.f_fenetre_racine = tk.Tk()
+        #taille de la fenetre
+        self.f_fenetre_racine.geometry(f"{self.f_fenetre_width}x{self.f_fenetre_height}")
+        #nom de la fenetre
+        self.__f_nom_fenetre = nom_fenetre 
+        #affichage du nom de la fenetre
+        self.f_fenetre_racine.title(self.f_titre)
+
+
     
-    def fermer_fenetre(self):
+    def f_afficher_fenetre(self):
+        """
+        Fonction : Ouvrir/Afficher la fenetre tkinter
+        Entree : self
+        Sortie : None
+        """
+        self.f_fenetre_racine.mainloop()
+
+    def f_fermer_fenetre(self):
         """
         Fonction : Fermer la fenetre tkinter
         Entree : self
         Sortie : None
         """
-        self.f_fenetre_racine.destroy
+        self.f_fenetre_racine.destroy()
     
     def get_nom_fenetre(self):
         return self.__f_nom_fenetre
+    
+    def get_canevas_height(self):
+        return self.f_canevas_height
+    
+    def get_canevas_width(self):
+        return self.f_canevas_width
 
 
 class Manager_fenetres(Fenetre):
@@ -88,9 +113,14 @@ class Manager_fenetres(Fenetre):
         -
     """
     def __init__(self):
+        super().__init__(None)
         #Stockage des fentetres dans un dictionnaire
         self.mf_stock_fenetre = dict() 
         self.mf_fenetre_courante = "Fenetre principale"
+
+        #Creation d'un container de tkinter
+        self.mf_container = tk.Frame(self.f_fenetre_racine)
+        self.mf_container.pack(fill = "both", expand = True)
 
     def ajouter_nouvelle_fenetre(self,anf_nom_fenetre:str):
         """
@@ -115,8 +145,10 @@ class Manager_fenetres(Fenetre):
         Entree : self, le nom de la fenetre (STR)
         Sortie : None
         """
-        afa_fenetre_affichee = self.mf_stock_fenetre[afa_nom_fenetre]
-        afa_fenetre_affichee.tk.tkraise()
+        if afa_nom_fenetre in self.mf_stock_fenetre:
+            afa_fenetre_affichee = self.mf_stock_fenetre[afa_nom_fenetre]
+            afa_fenetre_affichee.f_afficher_fenetre()
+        #afa_fenetre_affichee.tk.tkraise()
     
     """
     def lancer_fenetre_courante(self):
@@ -141,26 +173,26 @@ class Fenetre_principale(Fenetre):
     def __init__(self):
         super().__init__("Fenetre principale")
         
-        """
+        
         #Affichage du titre de la fenetre
-        f_fenetre_racine.Label(self, 
+        tk.Label(self.f_fenetre_racine, 
                  text='Casse Brique', 
                  font=("Arial", 20, "bold")).pack(pady=20)
-        """
+        
 
         #►LES BOUTONS◄
         #Creation du bouton pour lancer la fenetre de jeu
-        self.fp_btn_jouer = tk.Button(self, text = "Jouer")
+        self.fp_btn_jouer = tk.Button(self.f_fenetre_racine, text = "Jouer")
         self.fp_btn_jouer.pack(pady = 10)
 
         #Creation du bouton pour lancer la fenetre des options
-        self.fp_btn_option = tk.Button(self, text = "Option")
+        self.fp_btn_option = tk.Button(self.f_fenetre_racine, text = "Option")
         self.fp_btn_option.pack(pady = 10)
 
         #Creation du bouton pour quitter definitivement la fenetre
-        self.fp_btn_quitter = tk.Button(self, 
+        self.fp_btn_quitter = tk.Button(self.f_fenetre_racine, 
                                      text = "Quitter", 
-                                     command = self.fermer_fenetre())
+                                     command = self.f_fermer_fenetre)
         self.fp_btn_quitter.pack(pady = 10)
  
  
@@ -185,21 +217,21 @@ class Fenetre_option(Fenetre):
         #►LES BOUTONS◄
         #Creation des boutons des options
         #►OPTION 1
-        self.fo_btn_option1 = tk.Button(self, text = "WIP1")
+        self.fo_btn_option1 = tk.Button(self.f_fenetre_racine, text = "WIP1")
         self.fo_btn_option1.pack(pady = 10)
         #►OPTION 2
-        self.fo_btn_option2 = tk.Button(self, text="WIP2")
+        self.fo_btn_option2 = tk.Button(self.f_fenetre_racine, text="WIP2")
         self.fo_btn_option2.pack(pady = 10)
 
         #Creation du bouton pour revenir a la fenetre principale
-        self.fo_btn_retour = tk.Button(self, text = "Retour", 
+        self.fo_btn_retour = tk.Button(self.f_fenetre_racine, text = "Retour", 
                                     command = self.afficher_fenetre_actuelle("Fenetre principale")) 
         self.fo_btn_retour.pack(pady = 10)
 
         #Creation du bouton pour quitter definitivement la fenetre
-        self.fo_btn_quitter = tk.Button(self, 
+        self.fo_btn_quitter = tk.Button(self.f_fenetre_racine, 
                                      text = "Quitter", 
-                                     command = self.fermer_fenetre())
+                                     command = self.f_fermer_fenetre())
         self.fo_btn_quitter.pack(pady = 10)
  
 
@@ -222,20 +254,21 @@ class Fenetre_jeu(Fenetre):
         
         #►LES BARRES DE MENU ET D'INFOS◄
         #Creation de la barre de menu du haut
-        self.fj_haut_barre = tk.Frame(self)
+        self.fj_haut_barre = tk.Frame(self.f_fenetre_racine)
         self.fj_haut_barre.pack(fill = "x", pady = 5, padx = 5)
 
         #Creation de la barre de menu du bas
-        self.fj_bas_barre = tk.Frame(self)
+        self.fj_bas_barre = tk.Frame(self.f_fenetre_racine)
         self.fj_bas_barre.pack(side = "bottom", fill = "both", expand = True)
 
         #►LES BOUTONS◄
         #Creation du bouton pour quitter definitivement la fenetre
         self.fj_btn_quitter = tk.Button(self.fj_bas_barre, #Emplacement du bouton (la barre du bas)
                                      text = "Quitter", 
-                                     command = self.fermer_fenetre()) 
+                                     command = self.f_fermer_fenetre) 
         self.fj_btn_quitter.pack(side = "left", padx = 5, pady = 5)
 
+        """
         #Creation du bouton pour revenir a la fenetre principale
         self.fj_btn_retour = tk.Button(self.fj_bas_barre, #Emplacement du bouton (la barre du bas)
                                     text = "Retour", 
@@ -243,27 +276,29 @@ class Fenetre_jeu(Fenetre):
         self.fj_btn_retour.pack(side = "left", 
                              padx = 5, 
                              pady = 5)
+        
 
         #Creation du bouton pour lancer le jeu
         self.fj_btn_lancer = tk.Button(self.fj_bas_barre, #Emplacement du bouton (la barre du bas)
                                     text = "Lancer le jeu", 
-                                    command = self.lancer_jeu()) 
+                                    command = self.lancer_jeu) 
         self.fj_btn_lancer.pack(side = "left", 
                              padx = 5, 
                              pady = 5)
+        """
 
         #Creation du canevas ou se deroule le jeu
-        self.fj_canvas = tk.Canvas(self, 
-                                f_canevas_width = 1000, #Largeur
-                                f_canevas_height = 500, #Hauteur
+        self.fj_canvas = tk.Canvas(self.f_fenetre_racine, 
+                                width = self.f_canevas_width, #Largeur
+                                height = self.f_canevas_height, #Hauteur
                                 bg = "black") #Couleur
         self.fj_canvas.pack()
 
         #Affichage du score
         self.fj_score = 0
-        self.fj_score_var = tk.StringVar(value = f"Score : {self.score}")
-        self.fj_score_label = tk.Label(self.top_bar,  # SCORE est dans la bare du haut
-                                    textvariable = self.score_var, # Affichage du texte variable
+        self.fj_score_var = tk.StringVar(value = f"Score : {self.fj_score}")
+        self.fj_score_label = tk.Label(self.fj_haut_barre,  # SCORE est dans la bare du haut
+                                    textvariable = self.fj_score_var, # Affichage du texte variable
                                     font = ("Arial", 12, "bold"))  # Personalisation
         
         self.fj_score_label.pack(side = "left", 

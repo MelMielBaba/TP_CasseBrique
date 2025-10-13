@@ -19,7 +19,7 @@ J_Raquette = R.Raquette(2,5)
 J_Manager_fenetres = F.Manager_fenetres()
 
 #Creation des objets fenetre
-#J_Fenetre_principale = F.Fenetre_principale()
+J_Fenetre_principale = F.Fenetre_principale()
 #J_Fenetre_jeu = F.Fenetre_jeu()
 #J_Fenetre_option = F.Fenetre_option()
 
@@ -29,6 +29,11 @@ J_Manager_fenetres.ajouter_nouvelle_fenetre("Fenetre principale")
 
 #J_Manager_fenetres.lancer_fenetre_courante()
 
-print(J_Manager_fenetres.mf_stock_fenetre)
-print("baguette")
-print(J_Manager_fenetres.get_fenetre("Fenetre principale"))
+#print(J_Manager_fenetres.mf_stock_fenetre)
+#print("baguette")
+#print(J_Manager_fenetres.get_fenetre("Fenetre principale"))
+#J_Fenetre_principale.f_afficher_fenetre()
+#fenetre = F.Fenetre('nom')
+#fenetre.f_afficher_fenetre()
+#J_Fenetre_jeu.f_afficher_fenetre()
+J_Manager_fenetres.afficher_fenetre_actuelle("Fenetre principale")
