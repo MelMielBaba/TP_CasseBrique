@@ -7,10 +7,10 @@ Titre: Fichier principal du jeu
 """
 
 #Importation des fichiers
-import TP4_Fenetre as F
+import TP4_FenetreOFF as F
 import TP4_Balle as B
 import TP4_Raquette as R
-import TP4_Fenetre_Elouen as FELN
+import TP4_Fenetre as FELN
 
 
 if __name__ == "__main__":
