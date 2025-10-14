@@ -70,18 +70,13 @@ class FenetreDemarrage(ttk.Frame):
                   font=("Arial", 24, "bold")).pack(pady=20)
         ttk.Button(self,
                    text="Jouer",
-                   command=lambda: self.lancer_jeu(app)).pack(pady=10)
+                   command=lambda: app.show_frame("FenetreJeu")).pack(pady=10)
         ttk.Button(self, 
                    text="Options", 
                    command=lambda: app.show_frame("FenetreOption")).pack(pady=10)
         ttk.Button(self, 
                    text="Quitter", 
                    command=app.destroy).pack(pady=10)
-        
-    def lancer_jeu(self, app):
-        """Affiche la fenêtre de jeu et lance la raquette"""
-        app.show_frame(("FenetreJeu"))
-        FenetreJeu.afficher_raquette()
 
 
 class FenetreOption(ttk.Frame):
@@ -142,8 +137,10 @@ class FenetreJeu(ttk.Frame):
                                 bg="black")
         self.canvas.pack(pady=6)
 
-
-    # RAQUETTE
+    ##RAQUETTE
+        self.pos_x=250
+        self.afficher_raquette()
+        
     def afficher_raquette(self):
         """Affiche la raquette et met à jour sa position"""
         # Création de la raquette
@@ -156,10 +153,10 @@ class FenetreJeu(ttk.Frame):
             )
 
         # Met à jour la raquette par FPS
-        self.after(1/cste.FPS, self.mettre_a_jour_raquette)
+        self.after(2, self.mettre_a_jour_raquette)
 
     def mettre_a_jour_raquette(self):
-        self.pos_x = raq.pos_x  # pas de mouvement pour l'instant
+        self.pos_x = 250 #raq.pos_x  # pas de mouvement pour l'instant
         self.afficher_raquette()
 
 
