@@ -22,8 +22,6 @@ Description du fichier:
 TO DO :
     - Redéfinir les methodes de Fenetre(), fonctionnement et description en commentaire
     - Dans la classe Fenetre_option rajouter le bouton QUITTER self.fo_btn_quitter
-    - Trouver le moyen de recuperer la largeur et la hauteur du canevas (on en aurait 
-    besoin pour le balle)
     - Réfléchir a la gestion du score {plutot l'implementer dans TP4_Jeu.py pour la 
     modifier là}
     - {Creer une classe Manager_fenetres() pour les gestions des fenetres, car c'est 

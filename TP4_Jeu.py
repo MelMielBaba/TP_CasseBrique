@@ -6,16 +6,41 @@ Projet: TP4 - CasseBrique
 Titre: Fichier principal du jeu
 """
 
+"""
+TO DO:
+    - Gestion du score et des vies
+    - Si le bouton 'Lancer' est cliquer on lance une partie {avec la fonction jeu ?}
+    - Quand une brique est detruite j_score += 1
+    - Conditions d'arret du jeu:
+        -> Victoire : Plus aucunes briques existantes
+        -> Defaite : Plus aucunes vie (j_vie = 0)
+"""
+
 #Importation des fichiers
 import TP4_Fenetre as F
-import TP4_Balle as B
+import TP4_Balle as Bl
 import TP4_Raquette as R
+import TP4_Briques as Br
 import TP4_Fenetre_Elouen as FELN
 
+j_manager_fenetre = F.Manager_fenetres()
 
-if __name__ == "__main__":
+#Creation des objets
+j_balle = Bl.Balle()
+j_raquette = R.Raquette()
+j_briques = Br.Brique() #/!\ ici on a créer qu'UNE SEULE brique /!\
+
+j_score = 0
+j_vies = 3
+
+def lancer_casse_brique():
     app = FELN.App()
     app.mainloop()
+
+def lancer_partie():
+    pass
+
+    
 
 
 
