@@ -6,21 +6,23 @@ Titre: Fichier README
 """
 
 Description du fichier:
-    - indiquer les règles du jeu
-    - indiquer les spécificités de l'implémentation du projet
-    - indiquer l’adresse du répertoire GIT
-    - indiquer où se trouvent les implémentations des structures de données demandées (la liste, la file et la pile)
+    -> Indication des règles du jeu
+    -> Indication des spécificités de l'implémentation du projet
+    -> Indication de l’adresse du répertoire GIT
+    -> Indication d'où se trouvent les implémentations des structures de données demandées (la liste, la file et la pile)
 
 
 ►FONCTIONNENEMENT DU JEU◄
 
 
 ►STRUCTURE DU PROJET◄
-Fichier de lancement du jeu : TP4_Jeu.py
-Fichier des classes fenetres : TP4_Fenetre.py
+Fichier principal du jeu : TP4_Jeu.py
+Fichier des constantes : TP4_Constantes.py
+Fichier des classes fenetres et de la gestion graphique tkinter : TP4_Fenetre.py
 Fichier de la classe de la balle : TP4_Balle.py
 Fichier de la classe de la barre : TP4_Raquette.py
 Fichier de la classe des briques : TP4_Briques.py
+Fichier ReadMe du projet : TP4_ReadMe.txt
 
 ►URL DU REPERTOIRE GIT◄
 URL du git : https://github.com/MelMielBaba/TP_CasseBrique

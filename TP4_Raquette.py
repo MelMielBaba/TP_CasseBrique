@@ -5,27 +5,33 @@ Auteurs: Marie Louise MILLIEN & Elouen WURMSER
 Projet: TP4 - CasseBrique
 Titre: Fichier de la classe Raquette
 """
-pos_x=250
+
 
 
 #Importation du fichier des constantes
 import TP4_Constantes as C
 
 class Raquette():
-    def __init__(self,r_manager):
-        self.__r_long = C.c_longeur_raquette
-        self.__r_haut = C.c_hauteur_raquette
+    def __init__(self):
+        #Recuperation des constantes
+        self.__r_long = C.C_LARGEUR_RAQUETTE
+        self.__r_haut = C.C_HAUTEUR_RAQUETTE
+        self.__r_vitesse = C.C_VITESSE_RAQUETTE
+
         #recuperation des infos du canevas
-        self.r_lc = C.c_largeur_canvas
-        self.r_hc = C.c_hauteur_canvas
+        self.r_lc = C.C_LARGEUR_CANVAS
+        self.r_hc = C.C_HAUTEUR_CANVAS
+
         #position initiale de la balle
         self.__r_xbarre = self.r_lc/2
         self.__r_ybarre = self.r_hc/2
 
-        self.__r_vitesse = C.c_vitesse_raquette
 
     def get_r_xbarre(self):
         return self.__r_xbarre
+    
+    def set_r_xbarre(self,srxb_position:int):
+        self.__r_xbarre = srxb_position
         
     def change_xbarre(self,cxb_valeur:int):
         """
@@ -48,7 +54,10 @@ class Raquette():
         #deplacement a gauche
         if db_touche == 'q' or db_touche == 'Left':
             self.change_xbarre(+self.__r_vitesse)
+            print("Deplacement gauche")
 
         #deplacement a droite
         elif db_touche == 'd' or db_touche == 'Right':
             self.change_xbarre(-self.__r_vitesse)
+            print("Deplacement droite")
+
