@@ -22,6 +22,8 @@ class Raquette():
 
         self.__r_vitesse = C.c_vitesse_raquette
 
+    def get_r_xbarre(self):
+        return self.__r_xbarre
         
     def change_xbarre(self,cxb_valeur:int):
         """
