@@ -12,17 +12,13 @@ Ce fichier implémente la classe principale App qui gère la navigation entre le
 
 """
 
-
+import time
 import tkinter as tk
+import typing as typ
+import TP4_Constantes as cste
+import TP4_Raquette as raq
 from tkinter import ttk
 # on utilise ttk pour avoir une interface plus belle
-
-
-# --- Constantes ---
-WINDOW_WIDTH = 1000
-WINDOW_HEIGHT = 650
-CANVAS_WIDTH = 1000
-CANVAS_HEIGHT = 500
 APP_TITLE = "Casse Brique"
 
 
@@ -43,7 +39,7 @@ class App(tk.Tk):
         container.pack(fill="both", expand=True)
 
         # Dictionnaire des fenetres 
-        self.frames: Dict[str, tk.Frame] = {}
+        self.frames: typ.Dict[str, tk.Frame] = {}
 
         # création des fenetres
         for F in (FenetreDemarrage, FenetreOption, FenetreJeu):
@@ -59,6 +55,7 @@ class App(tk.Tk):
         """Affiche la frame identifiée par son nom cad la clé du dictionnaire frames"""
         frame = self.frames.get(name)
         frame.tkraise()
+    
 
 
 class FenetreDemarrage(ttk.Frame):
@@ -71,16 +68,20 @@ class FenetreDemarrage(ttk.Frame):
         ttk.Label(self, 
                   text=APP_TITLE, 
                   font=("Arial", 24, "bold")).pack(pady=20)
-
-        ttk.Button(self, 
-                   text="Jouer", 
-                   command=lambda: app.show_frame("FenetreJeu")).pack(pady=10)
+        ttk.Button(self,
+                   text="Jouer",
+                   command=lambda: self.lancer_jeu(app)).pack(pady=10)
         ttk.Button(self, 
                    text="Options", 
                    command=lambda: app.show_frame("FenetreOption")).pack(pady=10)
         ttk.Button(self, 
                    text="Quitter", 
                    command=app.destroy).pack(pady=10)
+        
+    def lancer_jeu(self, app):
+        """Affiche la fenêtre de jeu et lance la raquette"""
+        app.show_frame(("FenetreJeu"))
+        FenetreJeu.afficher_raquette()
 
 
 class FenetreOption(ttk.Frame):
@@ -136,10 +137,30 @@ class FenetreJeu(ttk.Frame):
 
         # Canvas de jeu
         self.canvas = tk.Canvas(self, 
-                                width=CANVAS_WIDTH, 
-                                height=CANVAS_HEIGHT, 
+                                width=cste.CANVAS_WIDTH, 
+                                height=cste.CANVAS_HEIGHT, 
                                 bg="black")
         self.canvas.pack(pady=6)
+
+
+    # RAQUETTE
+    def afficher_raquette(self):
+        """Affiche la raquette et met à jour sa position"""
+        # Création de la raquette
+        self.raquette = self.canvas.create_line(
+            self.pos_x - 40,
+            90,
+            self.pos_x + 40,90,
+            width=8,
+            fill='red'
+            )
+
+        # Met à jour la raquette par FPS
+        self.after(1/cste.FPS, self.mettre_a_jour_raquette)
+
+    def mettre_a_jour_raquette(self):
+        self.pos_x = raq.pos_x  # pas de mouvement pour l'instant
+        self.afficher_raquette()
 
 
 if __name__ == "__main__":
