@@ -49,7 +49,7 @@ def lancer_partie():
     print("Game over! Merci d'avoir jouer!")
 
     
-
+lancer_partie()
 
 
 #Creation du gestionnaire des fenetres

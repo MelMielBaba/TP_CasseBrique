@@ -54,7 +54,10 @@ class Raquette():
         #deplacement a gauche
         if db_touche == 'q' or db_touche == 'Left':
             self.change_xbarre(+self.__r_vitesse)
+            print("Deplacement gauche")
 
         #deplacement a droite
         elif db_touche == 'd' or db_touche == 'Right':
             self.change_xbarre(-self.__r_vitesse)
+            print("Deplacement droite")
+
