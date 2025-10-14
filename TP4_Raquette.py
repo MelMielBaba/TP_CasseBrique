@@ -5,6 +5,8 @@ Auteurs: Marie Louise MILLIEN & Elouen WURMSER
 Projet: TP4 - CasseBrique
 Titre: Fichier de la classe Raquette
 """
+pos_x=250
+
 
 class Raquette():
     def __init__(self,r_manager):
