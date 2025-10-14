@@ -12,20 +12,30 @@ import random as rd
 import math as m
 
 class Balle:
-    def __init__(self,rayon:int,largeur_canvas:int,hauteur_canvas:int):
-        self.__ray = rayon
+    def __init__(self,b_manager):
+        self.__rayon = 5
+        #recuperation des infos du canevas
+        self.lc = b_manager.get_largeur_canvas()
+        self.hc = b_manager.get_hauteur_canvas()
+        self.canvas = b_manager.get_canvas()
         #position initiale de la balle
-        self.__xballe = largeur_canvas/2
-        self.__yballe = hauteur_canvas/2
+        self.__xballe = self.lc/2
+        self.__yballe = self.hc/2
         #direction initiale de la balle
         self.__vit = 1
         self.__angle = rd.uniform(0,2*m.pi)
         #coordonnees vitesse initiales (angle = 0)
         self.__vx = self.__vit*m.cos(self.__angle)
         self.__vy = self.__vit*m.sin(self.__angle)
-        #recuperation des infos du canevas
-        self.lc = largeur_canvas
-        self.hc = hauteur_canvas
+
+        #Creation de l'objet balle
+        self.balle = self.canvas.create_oval(self.__xballe - self.__rayon,
+                                             self.__yballe - self.__rayon,
+                                             self.__xballe + self.__rayon,
+                                             self.__yballe + self.__rayon,
+                                             width = 1,
+                                             outline = 'black',
+                                             fill = 'blue')
     
     #Getter et Setter de la vitesse (sera utile quand on voudra faire aller le jeu plus vite)
     def get_vitesse(self):
@@ -68,23 +78,23 @@ class Balle:
         Sortie: 
         """
         #Rebond a gauche
-        if self.__xballe - self.__ray + self.__vx < 0 :
-            self.set_xballe(2 * self.__ray - self.__xballe)
+        if self.__xballe - self.__rayon + self.__vx < 0 :
+            self.set_xballe(2 * self.__rayon - self.__xballe)
             self.set_vxballe(-self.__vx)
         
         #Rebond a droite
-        elif self.__xballe + self.__ray + self.__vx > self.lc :
-            self.set_xballe(2 * (self.lc - self.__ray) - self.__xballe)
+        elif self.__xballe + self.__rayon + self.__vx > self.lc :
+            self.set_xballe(2 * (self.lc - self.__rayon) - self.__xballe)
             self.set_vxballe(-self.__vx)
         
         #Rebond en bas 
-        elif self.__yballe + self.__ray + self.__vy > self.hc :
-            self.set_yballe(2 * (self.hc - self.__ray) - self.__yballe)
+        elif self.__yballe + self.__rayon + self.__vy > self.hc :
+            self.set_yballe(2 * (self.hc - self.__rayon) - self.__yballe)
             self.set_vyballe(-self.__vy)
 
         #Rebond en haut (cas de collision avec la barre)
-        elif self.__yballe - self.__ray + self.__vy < 0 :
-            self.set_yballe(2 * self.__ray - self.__yballe)
+        elif self.__yballe - self.__rayon + self.__vy < 0 :
+            self.set_yballe(2 * self.__rayon - self.__yballe)
             self.set_vyballe(-self.__vy)
         
         else :

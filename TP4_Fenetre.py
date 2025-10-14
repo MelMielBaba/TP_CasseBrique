@@ -113,6 +113,19 @@ class Manager_fenetres:
 
     def get_fenetre(self,gf_nom_fenetre):
         return self.mf_stock_fenetre[gf_nom_fenetre]
+    
+    def get_largeur_canvas(self):
+        glc_fenetre = self.get_fenetre(self.mf_fenetre_courante)
+        return glc_fenetre.f_canvas_width
+    
+    def get_hauteur_canvas(self):
+        ghc_fenetre = self.get_fenetre(self.mf_fenetre_courante)
+        return ghc_fenetre.f_canvas_height
+    
+    def get_canvas(self):
+        gc_fenetre = self.get_fenetre(self.mf_fenetre_courante)
+        return gc_fenetre.f_canvas
+
 
 class Fenetre(tk.Frame):
     """
@@ -124,13 +137,13 @@ class Fenetre(tk.Frame):
     """
     def __init__(self,nom_fenetre):
         #Heritage
-        super().__init__(self)
+        super().__init__()
 
         # --- Constantes ---
         self.f_fenetre_width = 1000
         self.f_fenetre_height = 650
-        self.fj_canvas_width = 900
-        self.fj_canvas_height = 500
+        self.f_canvas_width = 900
+        self.f_canvas_height = 500
         self.f_titre = "Casse Brique"
 
         #Nom de la fenetre
@@ -168,10 +181,10 @@ class Fenetre_principale(Fenetre):
         -
     """
     def __init__(self,fp_parent,fp_manager):
-        super().__init__()
+        super().__init__("Fenetre principale")
         
         #Affichage du titre de la fenetre
-        tk.Label(self.f_fenetre_racine, 
+        tk.Label(self, 
                  text='Casse Brique', 
                  font=("Arial", 20, "bold")).pack(pady=20)
         
@@ -186,9 +199,9 @@ class Fenetre_principale(Fenetre):
         self.fp_btn_option.pack(pady = 10)
 
         #Creation du bouton pour quitter definitivement la fenetre
-        self.fp_btn_quitter = tk.Button(self.f_fenetre_racine, 
+        self.fp_btn_quitter = tk.Button(self, 
                                      text = "Quitter", 
-                                     command = self.fermer_fenetre)
+                                     )
         self.fp_btn_quitter.pack(pady = 10)
  
  
@@ -245,14 +258,14 @@ class Fenetre_jeu(Fenetre):
     Methodes :
         - Aucunes
     """
-    def __init__(self):
+    def __init__(self,fj_parent,fj_manager):
         super().__init__(self)
 
         #►LES BOUTONS◄
         #Creation du bouton pour quitter definitivement la fenetre
-        self.fj_btn_quitter = tk.Button(self.fj_bas_barre, #Emplacement du bouton (la barre du bas)
+        self.fj_btn_quitter = tk.Button(self.f_bas_barre, #Emplacement du bouton (la barre du bas)
                                      text = "Quitter", 
-                                     command = self.f_fermer_fenetre) 
+                                     ) 
         self.fj_btn_quitter.pack(side = "left", padx = 5, pady = 5)
 
         """
@@ -276,15 +289,15 @@ class Fenetre_jeu(Fenetre):
 
         #Creation du canevas ou se deroule le jeu
         self.fj_canvas = tk.Canvas(self, 
-                                width = self.fj_canevas_width, #Largeur
-                                height = self.fj_canevas_height, #Hauteur
+                                width = self.f_canvas_width, #Largeur
+                                height = self.f_canvas_height, #Hauteur
                                 bg = "black") #Couleur
         self.fj_canvas.pack()
 
         #Affichage du score
         self.fj_score = 0
         self.fj_score_var = tk.StringVar(value = f"Score : {self.fj_score}")
-        self.fj_score_label = tk.Label(self.fj_haut_barre,  # SCORE est dans la bare du haut
+        self.fj_score_label = tk.Label(self.f_haut_barre,  # SCORE est dans la bare du haut
                                     textvariable = self.fj_score_var, # Affichage du texte variable
                                     font = ("Arial", 12, "bold"))  # Personalisation
         
