@@ -20,7 +20,6 @@ from TP4_Raquette import Raquette
 from tkinter import ttk
 # on utilise ttk pour avoir une interface plus belle
 APP_TITLE = "Casse Brique"
-
 raquette = Raquette()
 
 class App(tk.Tk):
@@ -138,6 +137,7 @@ class FenetreJeu(ttk.Frame):
                                 width=cste.C_LARGEUR_FENETRE, 
                                 height=cste.C_HAUTEUR_FENETRE, 
                                 bg="black")
+        self.canvas.bind('<Key>',raquette.deplacement_barre)
         self.canvas.pack(pady=6)
 
         # Création unique de la raquette
@@ -148,17 +148,18 @@ class FenetreJeu(ttk.Frame):
             x_center - half_width, y_pos,
             x_center + half_width, y_pos,
             width=8, fill='red')
+        
 
         # Boucle d'update
-        self.fps_delay = 16  # ~60 FPS
+        self.fps_delay = 50  # ~60 FPS
         self.update_raquette()
 
 
     def update_raquette(self):
         """Met à jour les coordonnées de la raquette sur le canvas"""
         x_center = raquette.get_r_xbarre()  # récupère la valeur de l'autre fichier
-        half_width = 30
-        y_pos = 90
+        half_width = 90
+        y_pos = 600
         self.canvas.coords(
             self.raquette_id,
             x_center - half_width, y_pos,

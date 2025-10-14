@@ -12,7 +12,7 @@ import TP4_Balle as B
 import TP4_Raquette as R
 import TP4_Fenetre as FELN
 
-
+# IL FAUT LANCEMENT CE QUIL Y A DANS RQUETTE ICI
 if __name__ == "__main__":
     app = FELN.App()
     app.mainloop()
