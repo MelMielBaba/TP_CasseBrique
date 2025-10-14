@@ -38,7 +38,15 @@ def lancer_casse_brique():
     app.mainloop()
 
 def lancer_partie():
-    pass
+    while j_vies > 0:
+        #si balle tombe du canvas (pas de collision en bas pour rappel):
+            #j_vies -= 1
+            #detruire la balle actuelle et regenerer une nouvelle balle
+        #si une brique est detruite:
+            #j_score += 1
+        #actualiser l'affichage
+        pass
+    print("Game over! Merci d'avoir jouer!")
 
     
 

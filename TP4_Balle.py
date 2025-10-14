@@ -16,20 +16,20 @@ import math as m
 class Balle:
     def __init__(self):
         #Recuperation des constantes
-        self.__rayon = C.c_rayon_balle
+        self.__rayon = C.C_RAYON_BALLE
 
         #recuperation des infos du canevas
-        self.b_lc = C.c_largeur_canvas
-        self.b_hc = C.c_hauteur_canvas
+        self.b_lc = C.C_LARGEUR_CANVAS
+        self.b_hc = C.C_HAUTEUR_CANVAS
 
         #position initiale de la balle
         self.__xballe = self.b_lc/2
         self.__yballe = self.b_hc/2
 
         #direction initiale de la balle
-        self.__b_vit = C.c_vitesse_balle
+        self.__b_vit = C.C_VITESSE_BALLE
         self.__b_angle = rd.uniform(0,2*m.pi)
-        
+
         #coordonnees vitesse initiales (angle = 0)
         self.__vxballe = self.__b_vit*m.cos(self.__b_angle)
         self.__vyballe = self.__b_vit*m.sin(self.__b_angle)

@@ -16,7 +16,7 @@ Description du fichier:
 
 
 ►STRUCTURE DU PROJET◄
-Fichier de lancement du jeu : TP4_Jeu.py
+Fichier principal du jeu : TP4_Jeu.py
 Fichier des constantes : TP4_Constantes.py
 Fichier des classes fenetres et de la gestion graphique tkinter : TP4_Fenetre.py
 Fichier de la classe de la balle : TP4_Balle.py

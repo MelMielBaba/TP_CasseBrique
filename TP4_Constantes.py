@@ -7,21 +7,21 @@ Titre: Fichier des constantes
 """
 
 #Constantes de la fenetre tkinter
-c_largeur_fenetre = 1000
-c_hauteur_fenetre = 650
+C_LARGEUR_FENETRE = 1000
+C_HAUTEUR_FENETRE = 650
 
 #Constantes du canvas
-c_largeur_canvas = 1000
-c_hauteur_canvas = 500
+C_LARGEUR_CANVAS = 1000
+C_HAUTEUR_CANVAS = 500
 
 #Constantes de la raquette
-c_longeur_raquette = 5
-c_hauteur_raquette = 2
-c_vitesse_raquette = 10
+C_LARGEUR_RAQUETTE = 5
+C_HAUTEUR_RAQUETTE = 2
+C_VITESSE_RAQUETTE = 10
 
 #Constantes de la balles
-c_rayon_balle = 5
-c_vitesse_balle = 5
+C_RAYON_BALLE = 5
+C_VITESSE_BALLE = 5
 
 #Autres constantes
-c_FPS = 24
+C_FPS = 24
