@@ -1,0 +1,68 @@
+PROPOSITION D'ARCHITECTURE
+
+TP4_CasseBrique.py -> fichier 'MAIN'
+
+TP4_Jeu.py -> fichier 'CONTROLEUR' du jeu, son but est d'etre la colle entre 
+    a partie logique du programme et la partie graphique, il gère les touches clavier,
+    les collisions, la boucle de jeu et la mise à jour de la vue (partie graphique) 
+    à partir du modèle (partie logique)
+
+TP4_Fenetre {ou TP4_GestionGraphique} -> fichier 'VUE' du jeu, son but est de creer 
+    et gerer tout les aspects graphique PURS du jeu, ne contient que du dessin et 
+    des mises à jour visuelles, ce fichier n'affiche que ce que le 'controleur' lui
+    dicte d'afficher
+
+TP4_Balle.py -> fichier 'MODELE' ou 'logique' de la balle, son but est de représenter
+    la balle sous forme de classes Python autonomes, sans dépendre de Tkinter ni 
+    d’aucun affichage, le fichier contient des attributs (position, taille, vitesse) 
+    et des méthodes cad les actions que la balle sait faire elle-même (se déplacer,
+    rebondir, détecter une collision)
+
+TP4_Briques.py -> fichier 'MODELE' d'une brique (parmi l'ensemble des brique qui 
+    seront creer), son but est de représenter l'objet brique sans tkinter ni affichage,
+    le fichier contient les attributs d'une brique (position,taille,vie ou etat 
+    (ex cassée)) et les methodes d'un brique
+
+TP4_Raquette.py -> fichier 'MODELE' de la raquette, represente la raquette en tant 
+    qu'objet logique sans gestion graphique ou clavier, le fichier contient les attributs
+    position, taille, vittesse et des methodes (par exemeple deplacement mais 
+    /!\ATTENTION/!\ ces deplacement modifient juste les valeur des attributs position)
+
+TP4_Constantes.py -> le fichier regroupant toute les CONSTANTES
+
+Les fichiers ReadMe.txt et .gitignore
+
+
+Visuellement l'architecture ressemblerai a ça:
+    Visualisation 1
+        [ Utilisateur ] 
+            ↓ (touche clavier)
+        [ Contrôleur ] ─────► [ Modèles : Balle / Raquette / Briques ]
+            ↑                         ↓ (positions)
+        [ Vue Tkinter ] ◄──────────────┘ (affichage)
+
+    Visualisation 2
+        +-------------+
+        |   Joueur    |
+        +-------------+
+                │ touche clavier
+                ▼
+        +------------------+
+        |   Vue (Tkinter)  |
+        +------------------+
+                │ transmet event
+                ▼
+        +------------------+
+        |  Contrôleur      |
+        +------------------+
+                │ met à jour
+                ▼
+        +------------------+
+        |  Modèles logiques|
+        | (Raquette, Balle)|
+        +------------------+
+                │ nouvelles positions
+                ▼
+        +------------------+
+        |   Vue (maj)      |
+        +------------------+

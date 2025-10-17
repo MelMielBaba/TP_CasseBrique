@@ -3,7 +3,15 @@
 Date de creation : 7 octobre 2025
 Auteurs: Marie Louise MILLIEN & Elouen WURMSER
 Projet: TP4 - CasseBrique
-Titre: Fichier principal du jeu
+Titre: Fichier principal du jeu (CONTROLEUR)
+"""
+
+"""
+Description:
+    Fichier 'CONTROLEUR' du jeu, gere la communication entre ce que demande le joueur,
+    la 'VUE' graphique et les 'MODELE' logique
+    Ce fichier gère donc les touches clavier, les collisions, la boucle de jeu et la 
+    mise à jour de la vue (partie graphique) à partir du modèle (partie logique)
 """
 
 """
@@ -14,7 +22,7 @@ TO DO:
     - Conditions d'arret du jeu:
         -> Victoire : Plus aucunes briques existantes
         -> Defaite : Plus aucunes vie (j_vie = 0)
-    - IL FAUT LANCEMENT CE QUIL Y A DANS RQUETTE ICI
+    - IL FAUT LANCEMENT CE QU'IL Y A DANS RQUETTE ICI
 """
 
 #Importation des fichiers
@@ -22,7 +30,7 @@ import TP4_Fenetre as F
 import TP4_Balle as Bl
 import TP4_Raquette as R
 import TP4_Briques as Br
-import TP4_Fenetre_Elouen as FELN
+import TP4_FenetreOFF as FELN
 
 
 
