@@ -6,6 +6,7 @@ Projet: TP4 - CasseBrique
 Titre: Fichier de la classe de la raquette (MODELE)
 """
 
+#Description
 """
 Description:
     Ce fichier est le fichier 'MODELE' de la raquette, son but est de representer la 
