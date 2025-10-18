@@ -2,7 +2,7 @@
 Date de creation : 7 octobre 2025
 Auteurs: Marie Louise MILLIEN & Elouen WURMSER
 Projet: TP4 - CasseBrique
-Titre: Fichier README
+Titre: Fichier READ ME
 """
 
 Description du fichier:
@@ -13,20 +13,42 @@ Description du fichier:
 
 
 ►FONCTIONNENEMENT DU JEU◄
+    >> Lancer le jeu : Ouvrir le fichier TP4_CasseBrique.py et l'exécuter
+    >> Description de l'exécution générale:
+        +-------------+  lance   +-----------------+
+        |   Joueur    | -------> | TP4_CasseBrique |
+        +-------------+          +-----------------+
+                                          | appel
+                                          ▼
+                                     +---------+
+        +----> +-------------------> | TP4_Jeu | -------------------+
+        |      |                     +---------+                    |
+        |      |                         | modifie les parametres   |  
+        |      |                         ▼                          |
+        |      | envoie ses infos   +---------+                     |
+        |      +--------------------| MODELES |                     | envoie des 
+        |                           +---------+                     |   instructions
+        |                                                           |
+        |                                                           |
+        |                                                           ▼
+        |            envoie le nouveau dessin           +----------------------+
+        +-----------------------------------------------| TP4_GestionGraphique |
+                                                        +----------------------+
 
 
 ►STRUCTURE DU PROJET◄
-Fichier principal du jeu : TP4_Jeu.py
+Fichier de lancement du jeu : TP4_CasseBrique.py
+Fichier CONTROLEUR du jeu : TP4_Jeu.py
 Fichier des constantes : TP4_Constantes.py
-Fichier des classes fenetres et de la gestion graphique tkinter : TP4_Fenetre.py
-Fichier de la classe de la balle : TP4_Balle.py
-Fichier de la classe de la barre : TP4_Raquette.py
-Fichier de la classe des briques : TP4_Briques.py
+Fichier de la gestion graphique tkinter (VUE) : TP4_Fenetre.py/TP4_GestionGraphique.py
+Fichier de la classe de la balle (MODELE) : TP4_Balle.py
+Fichier de la classe de la barre (MODELE) : TP4_Raquette.py
+Fichier de la classe des briques (MODELE) : TP4_Briques.py
 Fichier ReadMe du projet : TP4_ReadMe.txt
 
 ►URL DU REPERTOIRE GIT◄
 URL du git : https://github.com/MelMielBaba/TP_CasseBrique
-/!\ Le depot est paramétré comme privé
+/!\ Le depot est paramétré comme privé /!\
 
 
 ►CONTRAINTES DU PROJET◄

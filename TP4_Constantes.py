@@ -35,3 +35,4 @@ C_HAUTEUR_BRIQUE = 1
 
 #Autres constantes
 C_FPS = 24
+C_TITRE_FENETRE = 'Casse Brique'

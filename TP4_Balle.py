@@ -99,10 +99,10 @@ class Balle:
             self.__vyballe = -self.__vyballe
             print("Balle perdue !")
         
-    def rebond_sur_raquette(self,rsr_raquette):
+    def rebond_sur_raquette(self,rsr_raquette:object):
         """
         Fonction : Gestion des rebond de la balle avec la raquette
-        Entree : None
+        Entree : Une raquette (OBJ)
         Sortie : None
         """
         #Recuperation des infos utiles de la raquette
@@ -134,12 +134,12 @@ class Balle:
                 self.__vxballe = self.__bl_vit * m.cos(self.__bl_angle)
                 self.__vyballe = -abs(self.__bl_vit * m.cos(self.__bl_angle)) #on veut que la balle remonte, donc on doit diminuer sur y
             
-            
+
         
-    def rebond_sur_brique(self,rsb_brique):
+    def rebond_sur_brique(self,rsb_brique:object):
         """
         Fonction : Gestion des rebond de la balle avec une brique
-        Entree : None
+        Entree : Une brique (OBJ)
         Sortie : None
         """
         #Recuperation des infos utiles de la brique

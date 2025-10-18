@@ -42,7 +42,7 @@ class Raquette():
         Entree : None
         Sortie : Couple posX,posY (TUPPLE)
         """
-        return self.__r_posx, self.__r_posy
+        return (self.__r_posx, self.__r_posy)
     
     def deplacement_barre(self,db_direction:str):
         """

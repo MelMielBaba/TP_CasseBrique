@@ -48,16 +48,15 @@ class Brique:
 
     def touchee_par_balle(self,tpb_balle:object):
         """
-        Fonction : 
-        Entree : 
-        Sortie : 
+        Fonction : Passe l'etat a "detruite" = False quand la brique est touche par la balle
+        Entree : Une balle (OBJ)
+        Sortie : None
         """
         #Recuperation des positions de la balle
-        tpb_b_posx,tpb_b_posy = tpb_balle.get_position()
+        tpb_b_posx,tpb_b_posy = tpb_balle.get_position_balle()
 
         #Cas ou la balle touche effectivement la brique
         if (self.__br_posx - self.__br_larg // 2) < tpb_b_posx < (self.__br_posx + self.__br_larg // 2):
             if (self.__br_posy - self.__br_haut // 2) < tpb_b_posy < (self.__br_posy - self.__br_haut // 2):
                 self.__br_etat = False
                 print("Brique detruite")
-                tpb_balle.rebond_balle()  # rebond de la balle

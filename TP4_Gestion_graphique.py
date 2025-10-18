@@ -20,6 +20,202 @@ Description:
     'CONTROLEUR'
 """
 
+#Importation des fichiers
+import TP4_Constantes as C
+
+#Importation des modules
+import tkinter as tk
+
+#Classe Manager_fenetre
+class Manager_fenetre:
+    """
+    Classe de gestion des differentes fenetres. Fait le lien entre les 
+    demandes du CONTROLLEUR et lui renvoie les resultats des VUE
+    """
+    def __init__(self,mf_balle:object,mf_raquette:object,score:int):
+        #Recuperation des objets transmis par le CONTROLLEUR
+        self.mf_balle = mf_balle
+        self.mf_raquette = mf_raquette
+        self.score = score
+        #reflechir aux briques
+
+        #Creation de la fenetre tkinter
+        self.mf_fenetre_racine = tk.Tk()
+        self.mf_fenetre_racine.title(C.C_TITRE_FENETRE)
+        self.mf_fenetre_racine.resizable(False,False)
+
+        #Creation du conteneur de Frame
+        self.mf_conteneur = tk.ttk.Frame(self.mf_fenetre_racine)
+        self.mf_conteneur.pack(fill="both", expand=True)
+
+        #Creation d'un dico stockant les objets fenetres
+        self.mf_dico_fenetre = {}
+
+        #Creation des fenetres a l'initialisation
+        for F in (Fenetre_demarage, Fenetre_option, Fenetre_jeu):
+            frame = F(parent = self.mf_conteneur, manager = self)
+            self.mf_dico_fenetre[F.__name__] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
+
+        #Affiche le premier ecran a l'initialisation
+        self.afficher_fenetre("Fenetre demarage")
+
+        #Recuperation de l'ecran de jeu pour les mise a jour
+        self.mf_ecran_jeu = self.mf_dico_fenetre.get("Fenetre jeu")
+
+    def afficher_fenetre(self,af_nom_fenetre:str):
+        """
+        Fonction : Affiche la fenetre dont le nom est donne en parametre
+        Entree : Le nom de la fenetre (STR)
+        Sortie : None
+        """
+        af_fenetre = self.mf_dico_fenetre.get(af_nom_fenetre)
+        if af_fenetre:
+            af_fenetre.tkraise()
+    
+    def demande_lancer_jeu(self):
+        """
+        Fonction : Renvoie au CONTROLLEUR la demande de l'utilisateur de lancer une partie
+        Entree : None
+        Sortie : True (BOOL)
+        """
+        pass
+
+    def update_dessin_raquette(self):
+        """
+        Fonction : Actualiser le dessin de la raquette
+        Entree : 
+        Sortie : 
+        """
+        pass
+
+    def update_dessin_balle(self):
+        """
+        Fonction : Actualiser le dessin de la 
+        Entree : 
+        Sortie : 
+        """
+        pass
+
+    def update_canvas(self):
+        """
+        Fonction : 
+        Entree : 
+        Sortie : 
+        """
+        pass
+    
+
+#Classe Mere Fenetre
+class Fenetre(tk.ttk.Frame):
+    def __init__(self, f_parent:tk.Widget, f_manager:Manager_fenetre, f_nom_fenetre:str):
+        super().__init__(f_parent, padding = 20)
+        #self.f_manager = f_manager #(?)
+
+        #Nom de cette fenetre
+        self.__nom_fenetre = f_nom_fenetre
+
+        #Titre de la fenetre
+        self.__titre_fenetre = tk.ttk.Label(self, 
+                                            text = f"{C.C_TITRE_FENETRE} - {self.__nom_fenetre}", 
+                                            font = ("Arial", 24, "bold"))
+        self.__titre_fenetre.pack(pady=20)
+
+        #Barre des infos
+        self.haut_barre = tk.ttk.Frame(self, padding = (8, 8))
+        self.haut_barre.pack(fill = "x")
+
+        #Barre de menus
+        self.bas_barre = tk.ttk.Frame(self, padding = (8, 8))
+        self.bas_barre.pack(side = "bottom",fill = "x")
+
+        #Bouton QUITTER
+        self.btn_quitter = tk.Button(self.bas_barre,
+                                     text = 'QUITTER',
+                                     command = f_manager.mf_fenetre_racine.destroy)
+        self.btn_quitter.pack(pady = 10)
+
+#Classe Fille Fenetre_demarage
+class Fenetre_demarage(Fenetre):
+    def __init__(self, f_parent, f_manager, f_nom_fenetre = "Fenetre demarage"):
+        super().__init__(f_parent, f_manager,f_nom_fenetre)
+        #Bouton OPTION
+        self.btn_option = tk.Button(self.bas_barre,
+                                     text = 'OPTION',
+                                     command = lambda: f_manager.afficher_fenetre("Fenetre option"))
+        self.btn_option.pack(pady = 10)
+
+        #Bouton JOUER
+        self.btn_jouer = tk.Button(self.bas_barre,
+                                     text = 'JOUER',
+                                     command = lambda: f_manager.afficher_fenetre("Fenetre jeu"))
+        self.btn_jouer.pack(pady = 10)
+
+#Classe Fille Fenetre_option
+class Fenetre_option(Fenetre):
+    def __init__(self, f_parent, f_manager, f_nom_fenetre = "Fenetre option"):
+        super().__init__(f_parent, f_manager, f_nom_fenetre)
+        #Bouton OPTION 1
+        self.btn_option1 = tk.Button(f_manager.mf_fenetre_racine,
+                                     text='OPTION 1')
+        self.btn_option1.pack(pady = 10)
+
+        #Bouton OPTION 2
+        self.btn_option2 = tk.Button(f_manager.mf_fenetre_racine,
+                                     text='OPTION 2')
+        self.btn_option2.pack(pady = 10)
+
+        #Bouton RETOUR
+        self.btn_retour = tk.Button(self.bas_barre,
+                                     text = 'RETOUR',
+                                     command = lambda: f_manager.afficher_fenetre("Fenetre demarage"))
+        self.btn_retour.pack(pady = 10)
+
+#Classe fille Fenetre_jeu
+class Fenetre_jeu(Fenetre):
+    def __init__(self, f_parent, f_manager, f_nom_fenetre = "Fenetre jeu"):
+        super().__init__(f_parent, f_manager, f_nom_fenetre)
+        #Score affichable
+        self.fj_score = tk.StringVar(value=f"Score : {f_manager.score}")
+
+        #Creation du Canvas
+        self.fj_canvas = tk.Canvas(self, 
+                                   width = C.C_LARGEUR_FENETRE, 
+                                   height = C.C_HAUTEUR_FENETRE, 
+                                   bg = "black")
+        self.fj_canvas.pack(pady = 6)
+
+        #Bouton LANCER
+        self.btn_lancer = tk.Button(self.bas_barre,
+                                     text = 'LANCER',
+                                     command = lambda: f_manager.demande_lancer_jeu)
+        self.btn_lancer.pack(pady = 10)
+
+        #Bouton RETOUR
+        self.btn_retour = tk.Button(self.bas_barre,
+                                     text = 'RETOUR',
+                                     command = lambda: f_manager.afficher_fenetre("Fenetre demarage"))
+        self.btn_retour.pack(pady = 10)
+
+        #Creation graphique de la raquette
+        self.fj_raquette = self.fj_canvas.create_rectangle(f_manager.mf_raquette.get_position_raquette[0] - C.C_LARGEUR_RAQUETTE / 2,
+                                                           f_manager.mf_raquette.get_position_raquette[1] - C.C_HAUTEUR_RAQUETTE / 2,
+                                                           f_manager.mf_raquette.get_position_raquette[0] + C.C_LARGEUR_RAQUETTE / 2,
+                                                           f_manager.mf_raquette.get_position_raquette[1] + C.C_HAUTEUR_RAQUETTE / 2,
+                                                           fill = 'blue')
+        
+        #Creation graphique de la balle
+        self.fj_balle = self.fj_canvas.create_oval(f_manager.mf_balle.get_position_balle[0] - C.C_RAYON_BALLE,
+                                                   f_manager.mf_balle.get_position_balle[1] - C.C_RAYON_BALLE,
+                                                   f_manager.mf_balle.get_position_balle[0] + C.C_RAYON_BALLE,
+                                                   f_manager.mf_balle.get_position_balle[1] - C.C_RAYON_BALLE,
+                                                   fill = 'red')
+        
+        #Creation graphique des briques
+        """a realiser sous forme de fonction afin dajouter des lignes de briques"""
+
+
+""""""
 #Schema de l'architecture du fichier envisagee
 """
 =========================================
@@ -96,85 +292,11 @@ Interaction clavier
 # Importation des modules nécessaires
 # tkinter pour l'interface graphique
 # typing pour la gestion des types
-# TP4_Constantes pour les constantes du jeu
-# TP4_Raquette, TP4_Balle, TP4_Briques pour la logique du jeu
 #import tkinter as tk
 #import typing as typ
-#import TP4_Constantes as C
-#import TP4_Raquette as R
-#import TP4_Balle as Bl
-#import TP4_Briques as Br
 
 # Titre de l'application
 #APP_TITLE = "Casse Brique"
-
-# Classe principale qui gère toutes les fenêtres
-#class Manager_fenetre(tk.Tk):
-#    #Classe qui gère toutes les fenêtres de l'application
-
-#    def __init__(self):
-#        super().__init__()
-#        self.title(APP_TITLE)
-#        self.resizable(False, False)
-
-#        # Conteneur pour toutes les fenêtres
-#        container = tk.ttk.Frame(self)
-#        container.pack(fill="both", expand=True)
-
-#        # Dictionnaire des fenêtres
-#        self.frames: typ.Dict[str, tk.Frame] = {}
-
-#        # Création des fenêtres et ajout au dictionnaire
-#        for F in (Fenetre_demarage, Fenetre_option, Fenetre_jeu):
-#            frame = F(parent=container, manager=self)
-#            self.frames[F.__name__] = frame
-#            frame.grid(row=0, column=0, sticky="nsew")
-
-#        # Affiche la fenêtre de démarrage
-#        self.show_frame("Fenetre_demarage")
-
-#    def show_frame(self, name: str):
-#        #Affiche la fenêtre identifiée par son nom
-#        frame = self.frames.get(name)
-#        if frame:
-#            frame.tkraise()
-
-
-# Classe représentant la fenêtre de démarrage
-#class Fenetre_demarage(tk.ttk.Frame):
-#    #Fenêtre de démarrage avec boutons Jouer / Option / Quitter
-
-#    def __init__(self, parent: tk.Widget, manager: Manager_fenetre):
-#        super().__init__(parent, padding=20)
-#        self.manager = manager
-
-#        # Titre de la fenêtre
-#        tk.ttk.Label(self, text=APP_TITLE, font=("Arial", 24, "bold")).pack(pady=20)
-
-#        # Boutons Jouer, Options et Quitter
-#        tk.ttk.Button(self, text="Jouer", command=lambda: manager.show_frame("Fenetre_jeu")).pack(pady=10)
-#        tk.ttk.Button(self, text="Options", command=lambda: manager.show_frame("Fenetre_option")).pack(pady=10)
-#        tk.ttk.Button(self, text="Quitter", command=manager.destroy).pack(pady=10)
-
-
-# Classe représentant la fenêtre des options
-#class Fenetre_option(tk.ttk.Frame):
-#    #Fenêtre des options
-
-#    def __init__(self, parent: tk.Widget, manager: Manager_fenetre):
-#        super().__init__(parent, padding=20)
-#        self.manager = manager
-
-#        # Titre Options
-#        tk.ttk.Label(self, text="Options", font=("Arial", 20, "bold")).pack(pady=20)
-
-#        # Boutons Option 1 et 2 (WIP)
-#        tk.ttk.Button(self, text="Option 1 (WIP)").pack(pady=6)
-#        tk.ttk.Button(self, text="Option 2 (WIP)").pack(pady=6)
-
-#        # Bouton Retour vers la fenêtre de démarrage
-#        tk.ttk.Button(self, text="Retour", command=lambda: manager.show_frame("Fenetre_demarage")).pack(pady=12)
-
 
 # Classe représentant la fenêtre du jeu
 #class Fenetre_jeu(tk.ttk.Frame):
