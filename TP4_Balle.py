@@ -106,8 +106,8 @@ class Balle:
         Sortie : None
         """
         #Recuperation des infos utiles de la raquette
-        rsr_r_posx = rsr_raquette.__r_posx
-        rsr_r_posy = rsr_raquette.__r_posy
+        rsr_r_posx = rsr_raquette.get_position_raquette()[0]
+        rsr_r_posy = rsr_raquette.get_position_raquette()[1]
         rsr_r_larg = C.C_LARGEUR_RAQUETTE
         rsr_r_haut = C.C_HAUTEUR_RAQUETTE
         

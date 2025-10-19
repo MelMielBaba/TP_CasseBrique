@@ -32,8 +32,8 @@ class Raquette():
         self.__r_vitesse = C.C_VITESSE_RAQUETTE
 
         #Position logique initiale de la balle (pas graphique)
-        self.__r_posx = self.__r_larg/2
-        self.__r_posy = self.__r_haut/2
+        self.__r_posx = self.__r_larg / 2
+        self.__r_posy = self.__r_haut - 20
 
     def get_position_raquette(self):
         """
