@@ -37,8 +37,6 @@ import TP4_Briques as Br
 
 #Importation des fichiers VUE
 import TP4_Gestion_graphique as Gg
-import TP4_Fenetre as F
-import TP4_FenetreOFF as FELN
 
 #Importation des modules
 import tkinter as tk
