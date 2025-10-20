@@ -5,23 +5,32 @@ Auteurs: Marie Louise MILLIEN & Elouen WURMSER
 Projet: TP4 - CasseBrique
 Titre: Fichier des constantes
 """
+# CONSTANTE POUR LA BRIQUES
+VIES = 2
+COULEUR = "green"
+TYPE = "normal"
+LIGNES = 10
+COLONNES = 9
+LARGEUR_BRIQUE = 80
+HAUTEUR_BRIQUE = 20
+TOP_OFFSET = 30
+PADDING = 6
 
-#Constantes de la fenetre tkinter
-C_LARGEUR_FENETRE = 1000
-C_HAUTEUR_FENETRE = 650
+# BALLES
+RAYON_BALLE = 8
+VITESSE_BALLE = 6.0   # pixels par frame (ajustable)
+FACTOR = 1.05
 
-#Constantes du canvas
-C_LARGEUR_CANVAS = 1000
-C_HAUTEUR_CANVAS = 500
+# CANVA
+LARGEUR_CANVA = 900
+HAUTEUR_CANVA = 600
 
-#Constantes de la raquette
-C_LARGEUR_RAQUETTE = 5
-C_HAUTEUR_RAQUETTE = 2
-C_VITESSE_RAQUETTE = 10
+# RAQUETTE
+VITESSE_RAQUETTE = 30
+LARGEUR_RAQUETTE = 160
+HAUTEUR_RAQUETTE = 16
 
-#Constantes de la balles
-C_RAYON_BALLE = 5
-C_VITESSE_BALLE = 5
+# AUTRES
+FPS_DELAY_MS = 16   # ~60 FPS
+NOMBRE_VIES = 4
 
-#Autres constantes
-C_FPS = 24
