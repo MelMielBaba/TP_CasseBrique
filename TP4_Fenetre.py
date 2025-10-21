@@ -1,33 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Date de creation : 7 octobre 2025
-Auteur: Marie Louise MILLIEN & Elouen WURMSER
-Projet: TP4 - Casse-Brique
-Fichier : Fichier des Fenetres et gestion graphique tkinter 
-"""
-"""
-Description:
-  Ce fichier implémente la classe principale App qui gère la navigation entre les 3 fenetres:
-  - FenetreDemarrage : fenetre de démarrage avec les boutons Jouer, Option, Quitter
-  - FenetreOption : fenetre des options
-  - FenetreJeu : fentre contenant le canvas de jeu et le score
-"""
-
-#TO DO
-"""
-TO DO :
-    - Redéfinir les methodes de Fenetre(), fonctionnement et description en commentaire
-    - Dans la classe Fenetre_option rajouter le bouton QUITTER self.fo_btn_quitter
-    - Réfléchir a la gestion du score {plutot l'implementer dans TP4_Jeu.py pour la 
-    modifier là}
-    - {Creer une classe Manager_fenetres() pour les gestions des fenetres, car c'est 
-    bizarre que la mere appelle ses filles dans ses methodes}
-    - Verifier que Fenetre_jeu() verifie les points suivant:
-        • Un canevas (zone principale du jeu)
-        • Une zone de texte affichant le score
-        • Un bouton permettant de démarrer une partie
-        • Un bouton permettant de quitter le jeu proprement
-        • Un menu avec différentes options
+Fichier principal pour lancer le Casse-Brique (version avec options modifiables).
+Utilise : cstes.py, raquette.py, balle.py, briques.py
 """
 
 import tkinter as tk

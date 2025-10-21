@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Date de creation : 14 octobre 2025
-Auteurs: Marie Louise MILLIEN & Elouen WURMSER
-Projet: TP4 - CasseBrique
-Titre: Fichier des constantes
-"""
 # CONSTANTE POUR LA BRIQUES
 VIES = 2
 COULEUR = "green"
@@ -33,4 +26,3 @@ HAUTEUR_RAQUETTE = 16
 # AUTRES
 FPS_DELAY_MS = 16   # ~60 FPS
 NOMBRE_VIES = 4
-
