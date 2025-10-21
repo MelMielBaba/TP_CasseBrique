@@ -5,7 +5,7 @@ Projet: TP4 - CasseBrique
 Titre: Fichier README
 """
 
-Description du fichier:
+►Description du fichier◄
     -> Indication des règles du jeu
     -> Indication des spécificités de l'implémentation du projet
     -> Indication de l’adresse du répertoire GIT
