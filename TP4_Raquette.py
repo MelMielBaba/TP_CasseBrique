@@ -37,11 +37,21 @@ class Raquette:
     def move_by(self, dx):
         self.set_x_center(self.x_center + dx)
 
-    def deplacement_barre(self, event):
-        # event.keysym fournit 'Left'/'Right' etc
-        key = event.keysym
-        if key in ('Left', 'q', 'a'):
-            self.move_by(-self.vitesse_raquette)
-        elif key in ('Right', 'd'):
-            self.move_by(self.vitesse_raquette)
-        # aussi souris: handled from fenetre (optionnel)
+    def deplacement_barre(self,event):
+        """
+        Fonction : Gere le deplacement de la barre en fonction des touches du clavier
+        Entree : un evenement de tkinter
+        Sortie : None
+        """
+        db_touche = event.keysym
+        print(db_touche)
+
+        #deplacement a gauche
+        if db_touche == 'q' or db_touche == 'Left':
+            self.change_xbarre(+self.__r_vitesse)
+            print("GROSSE GAILAND")
+
+        #deplacement a droite
+        elif db_touche == 'd' or db_touche == 'Right':
+            self.change_xbarre(-self.__r_vitesse)
+        print("JE SUIS AUTANT GAY QUE MARILYLONE ")
