@@ -13,12 +13,16 @@ Description du fichier:
 
 ►REGLES DU JEU◄
     -> Lancer le jeu
-    -> Soit vous pouvez lancer le jeu avec les parametre par defaut en cliquant sur JOUER
-    -> Soit vous pouvez d'abord modifier les pa
+    -> Soit vous pouvez lancer le jeu avec les parametre par defaut en 
+    cliquant sur JOUER
+    -> Soit vous pouvez d'abord modifier les parametre en cliquant sur 
+    OPTION
+    -> Une fois le jeu lancé le but est de detruire toutes les briques 
+    sans perdre la balle
 
 
 ►FONCTIONNENEMENT DU JEU◄
-    >> Lancer le jeu : Ouvrir le fichier TP4_CasseBrique.py et l'exécuter
+    >> Lancer le jeu : Ouvrir le fichier TP4_Jeu.py et l'exécuter
 
 
 ►STRUCTURE DU PROJET◄
@@ -32,7 +36,7 @@ Fichier ReadMe du projet : TP4_ReadMe.txt
 
 ►URL DU REPERTOIRE GIT◄
 URL du git : https://github.com/MelMielBaba/TP_CasseBrique
-/!\ Le depot est paramétré comme privé
+/!\ Le depot est paramétré comme privé il faudra le passe en public
 
 ►EMPLACEMENT DE LA LISTE,DE LA FILE ET DE LA PILE◄
     >> Liste : 
