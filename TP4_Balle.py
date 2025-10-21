@@ -97,7 +97,6 @@ class Balle:
         elif self.__bl_posy - self.__bl_rayon + self.__vyballe < 0 :
             self.__bl_posy = 2 * self.__bl_rayon - self.__bl_posy
             self.__vyballe = -self.__vyballe
-            print("Balle perdue !")
         
     def rebond_sur_raquette(self,rsr_raquette:object):
         """
