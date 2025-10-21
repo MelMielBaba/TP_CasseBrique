@@ -190,9 +190,11 @@ class FenetreJeu(ttk.Frame):
         self.canvas.pack(pady=6)
         self.canvas.focus_set()
 
+
         # raquette & input
         self.raquette = Raquette(c.LARGEUR_CANVA, c.HAUTEUR_CANVA)
-        self.canvas.bind('<Key>', self.raquette.deplacement_barre)
+        self.canvas.bind('<KeyPress>', self.clavier_mouvement)
+        self.canvas.focus_set() 
         self.canvas.bind('<Motion>', self.souris_mouvement)
 
         # dessiner la raquette (graphique)
@@ -266,6 +268,9 @@ class FenetreJeu(ttk.Frame):
 
     def souris_mouvement(self, event):
         self.raquette.set_x_center(event.x)
+
+    def clavier_mouvement(self,event):
+        self.raquette.deplacement_barre(event.x)
 
     def update_raquette_graphics(self):
         x_center = self.raquette.get_x_center()
@@ -356,7 +361,7 @@ class FenetreJeu(ttk.Frame):
         self.check_collisions()
 
         if self.brique_manager.reste() == 0:
-            messagebox.showinfo("Victoire", f"Bravo ! Tu as détruit toutes les briques.\nScore: {self.score}")
+            messagebox.showinfo("Victoire", f"Bravo ! Ton score:\nScore: {self.score}")
             self.restart_game()
             return
 

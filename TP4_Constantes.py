@@ -1,6 +1,13 @@
+"""
+Date de creation : 12 octobre 2025
+Auteurs: Marie Louise MILLIEN & Elouen WURMSER
+Projet: TP4 - CasseBrique
+Titre: Fichier des constantes
+"""
+
 # CONSTANTE POUR LA BRIQUES
 VIES = 2
-COULEUR = "green"
+COULEUR = "green"  # les strings ne fonctionnent pas
 TYPE = "normal"
 LIGNES = 10
 COLONNES = 9
@@ -11,7 +18,7 @@ PADDING = 6
 
 # BALLES
 RAYON_BALLE = 8
-VITESSE_BALLE = 6.0   # pixels par frame (ajustable)
+VITESSE_BALLE = 6.0
 FACTOR = 1.05
 
 # CANVA
@@ -24,5 +31,5 @@ LARGEUR_RAQUETTE = 160
 HAUTEUR_RAQUETTE = 16
 
 # AUTRES
-FPS_DELAY_MS = 16   # ~60 FPS
-NOMBRE_VIES = 4
+FPS_DELAY_MS = 16   #  ENVIRON 60 FPS
+NOMBRE_VIES = 3
