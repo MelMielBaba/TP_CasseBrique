@@ -363,7 +363,3 @@ class FenetreJeu(ttk.Frame):
         # replanifier prochain frame
         self._schedule_next_frame()
 
-
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()

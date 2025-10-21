@@ -11,14 +11,20 @@ Description du fichier:
     -> Indication de l’adresse du répertoire GIT
     -> Indication d'où se trouvent les implémentations des structures de données demandées (la liste, la file et la pile)
 
+►REGLES DU JEU◄
+    -> Lancer le jeu
+    -> Soit vous pouvez lancer le jeu avec les parametre par defaut en cliquant sur JOUER
+    -> Soit vous pouvez d'abord modifier les pa
+
 
 ►FONCTIONNENEMENT DU JEU◄
+    >> Lancer le jeu : Ouvrir le fichier TP4_CasseBrique.py et l'exécuter
 
 
 ►STRUCTURE DU PROJET◄
-Fichier principal du jeu : TP4_Jeu.py
+Fichier de lancement du jeu : TP4_Jeu.py
 Fichier des constantes : TP4_Constantes.py
-Fichier des classes fenetres et de la gestion graphique tkinter : TP4_Fenetre.py
+Fichier de la gestion graphique tkinter : TP4_Fenetre.py
 Fichier de la classe de la balle : TP4_Balle.py
 Fichier de la classe de la barre : TP4_Raquette.py
 Fichier de la classe des briques : TP4_Briques.py
@@ -28,6 +34,10 @@ Fichier ReadMe du projet : TP4_ReadMe.txt
 URL du git : https://github.com/MelMielBaba/TP_CasseBrique
 /!\ Le depot est paramétré comme privé
 
+►EMPLACEMENT DE LA LISTE,DE LA FILE ET DE LA PILE◄
+    >> Liste : 
+    >> File : 
+    >> Pile : 
 
 ►CONTRAINTES DU PROJET◄
 -> Le jeu est codé en POO
