@@ -23,6 +23,10 @@ Titre: Fichier README
 
 ►FONCTIONNENEMENT DU JEU◄
     >> Lancer le jeu : Ouvrir le fichier TP4_Jeu.py et l'exécuter
+    >> Fonctionnement general :
+        TP4_Jeu appelle TP4_Fenetre en creant une App et en la lancant
+        Cette App creer les differente fenetre comme etant des frames dans un conteneur
+        
 
 
 ►STRUCTURE DU PROJET◄
