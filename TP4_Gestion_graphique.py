@@ -87,7 +87,9 @@ class Manager_fenetre:
         Entree : None
         Sortie : True (BOOL)
         """
-        return True
+        if "Fenetre_jeu" in self.mf_conteneur:
+            if self.mf_conteneur["Fenetre_jeu"].demande_jeu == True:
+                self.mainloop()
 
     def update_dessin_raquette(self):
         """
@@ -184,6 +186,9 @@ class Fenetre_option(Fenetre):
 class Fenetre_jeu(Fenetre):
     def __init__(self, f_parent, f_manager, f_nom_fenetre = "Fenetre_jeu"):
         super().__init__(f_parent, f_manager, f_nom_fenetre)
+        #Demande de jeu
+        self.demande_jeu = False
+
         #Score affichable
         self.fj_score = tk.StringVar(value=f"SCORE : {f_manager.score}")
         self.fj_score_affiche = ttk.Label(self.haut_barre,
@@ -210,7 +215,7 @@ class Fenetre_jeu(Fenetre):
         #Bouton LANCER
         self.btn_lancer = tk.Button(self.bas_barre,
                                      text = 'LANCER',
-                                     command = lambda: f_manager.demande_lancer_jeu())
+                                     command = lambda: self.activer_demande_jeu())
         self.btn_lancer.pack(side = "left", padx = 5, pady = 5)
 
         #Bouton RETOUR
@@ -236,6 +241,11 @@ class Fenetre_jeu(Fenetre):
         
         #Creation graphique des briques
         """a realiser sous forme de fonction afin dajouter des lignes de briques"""
+
+    #Activer la demande de jeu
+    def activer_demande_jeu(self):
+        print("oui")
+        self.demande_jeu = True
 
 
 
