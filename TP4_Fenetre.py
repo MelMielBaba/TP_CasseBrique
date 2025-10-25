@@ -1,39 +1,69 @@
 # -*- coding: utf-8 -*-
 """
-Fichier principal pour lancer le Casse-Brique (version avec options modifiables).
-Utilise : cstes.py, raquette.py, balle.py, briques.py
+Date de creation : 7 octobre 2025
+Auteurs: Marie Louise MILLIEN & Elouen WURMSER
+Projet: TP4 - CasseBrique
+Titre: Fichier principal de la gestion du jeu
 """
 
-import tkinter as tk
-from tkinter import ttk, messagebox
+"""
+Description :
+    Fichier principal pour lancer le Casse-Brique (version avec options modifiables).
+    Utilise : TP4_Constantes.py,
+    Cree les instances issues des fichier: TP4_Raquette.py, TP4_Balle.py, TP4_Briques.py
+"""
+
+#Importation des fichiers
 import TP4_Constantes as c
 from TP4_Raquette import Raquette
 from TP4_Balle import Balle
 from TP4_Briques import BriqueManager
 
+#Importation des modules
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+#Constante de type str
 APP_TITLE = "Casse Brique"
 
+#Creation de la classe qui gere les differentes fenetres
 class App(tk.Tk):
+    """
+    Fonction : Herite de tk.Tk() et gere la creation de la fenetre tkinter dans 
+    laquelle evolue les differents ecrans
+    Attributs : self.frames le dictionnaire des objets des fenetres
+    Methodes : show_frame(name) permet d'afficher la fenetre dont on donne le nom
+    """
     def __init__(self):
+        #Creation de la fenetre tkinter
         super().__init__()
         self.title(APP_TITLE)
         self.resizable(False, False)
 
+        #Creation du conteneur des frames
         container = ttk.Frame(self)
         container.pack(fill="both", expand=True)
 
+        #Creation d'un dictionnaire stockant les objets fenetres
         self.frames = {}
         for F in (FenetreDemarrage, FenetreOption, FenetreJeu):
             frame = F(parent=container, app=self)
             self.frames[F.__name__] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
+        #Affichage de la premiere fenetre
         self.show_frame("FenetreDemarrage")
 
     def show_frame(self, name: str):
-        """Affiche la frame identifiée par son nom et gère on_hide/on_show."""
+        """
+        Fonction : Affiche la frame identifiée par son nom et gère on_hide/on_show.
+        Entree : Le nom de la fenetre a afficher
+        Sortie : None
+        """
+        #Recuperation de la fenetre d'avant ?
         prev = getattr(self, "_current_frame_name", None)
-        # appeler on_hide sur la frame précédente si elle a la méthode
+
+        #Appeler on_hide sur la frame précédente si elle a la méthode
         if prev is not None and prev in self.frames:
             prev_frame = self.frames.get(prev)
             if hasattr(prev_frame, "on_hide") and callable(prev_frame.on_hide):
@@ -42,6 +72,7 @@ class App(tk.Tk):
                 except Exception as e:
                     print("Erreur on_hide:", e)
 
+        #Recuperation de la fenetre a afficher maintenant
         frame = self.frames.get(name)
         if frame is None:
             return
@@ -67,7 +98,7 @@ class App(tk.Tk):
                 # log simple (print) pour debug, mais on continue
                 print("Erreur on_show:", e)
 
-
+#Classe de la fenetre de demarrage
 class FenetreDemarrage(ttk.Frame):
     def __init__(self, parent, app):
         super().__init__(parent, padding=20)

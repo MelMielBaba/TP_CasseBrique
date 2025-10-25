@@ -1,5 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+Date de creation : 7 octobre 2025
+Auteurs: Marie Louise MILLIEN & Elouen WURMSER
+Projet: TP4 - CasseBrique
+Titre: Fichier de la raquette
+"""
+
+#Importation des fichiers
 import TP4_Constantes as c
 
+#Creation de la classe de l'objet raquette
 class Raquette:
     def __init__(self, largeur_canva=c.LARGEUR_CANVA, hauteur_canva=c.HAUTEUR_CANVA):
         self.largeur_canva = largeur_canva

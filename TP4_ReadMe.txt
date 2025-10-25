@@ -27,8 +27,6 @@ Titre: Fichier README
         TP4_Jeu appelle TP4_Fenetre en creant une App et en la lancant
         Cette App creer les differente fenetre comme etant des frames dans un conteneur
         
-
-
 ►STRUCTURE DU PROJET◄
 Fichier de lancement du jeu : TP4_Jeu.py
 Fichier des constantes : TP4_Constantes.py

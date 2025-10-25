@@ -1,5 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+Date de creation : 7 octobre 2025
+Auteurs: Marie Louise MILLIEN & Elouen WURMSER
+Projet: TP4 - CasseBrique
+Titre: Fichier de la gestion des briques
+"""
+
+#Importation des fichiers
 import TP4_Constantes as c
 
+#Creation de la classe de l'objet brique
 class Brique:
     def __init__(self, canvas, x1, y1, x2, y2, couleur=c.COULEUR, vies=c.VIES, types=c.TYPE):
         self.canvas = canvas
@@ -30,7 +40,7 @@ class Brique:
     def coords(self):
         return self.canvas.coords(self.id)
 
-
+#Creation de la classe de gestion des briques
 class BriqueManager:
     def __init__(self, canvas,
                  lignes=c.LIGNES, colonnes=c.COLONNES,

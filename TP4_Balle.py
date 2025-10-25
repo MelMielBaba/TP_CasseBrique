@@ -1,7 +1,19 @@
+# -*- coding: utf-8 -*-
+"""
+Date de creation : 7 octobre 2025
+Auteurs: Marie Louise MILLIEN & Elouen WURMSER
+Projet: TP4 - CasseBrique
+Titre: Fichier de la balle
+"""
+
+#Importation des fichiers
 import TP4_Constantes as c
+
+#Importation des modules
 import random as rd
 import math as m
 
+#Creation de la classe de l'objet balle
 class Balle:
     def __init__(self, canvas, x=None, y=None, rayon=c.RAYON_BALLE, vitesse=c.VITESSE_BALLE, color="white"):
         self.canvas = canvas
