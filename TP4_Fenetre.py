@@ -222,7 +222,7 @@ class FenetreJeu(ttk.Frame):
 
         # raquette & input
         self.raquette = Raquette(c.LARGEUR_CANVA, c.HAUTEUR_CANVA)
-        self.canvas.bind('<Key>', self.deplacement_barre)
+        self.canvas.bind('<Key>', self.raquette.deplacement_barre)
         #self.canvas.bind('<Motion>', self.souris_mouvement)
 
         # dessiner la raquette (graphique)
@@ -299,17 +299,6 @@ class FenetreJeu(ttk.Frame):
 
     def souris_mouvement(self, event):
         self.raquette.set_x_center(event.x)
-    
-    def deplacement_barre(self, event):
-        # event.keysym fournit 'Left'/'Right' etc
-        print(event.keysym, event.keycode)
-        key = event.keysym
-        if key in ('Left', 'q'):
-            print('gauche')
-            self.raquette.move_by(-self.raquette.vitesse_raquette)
-        elif key in ('Right', 'd'):
-            print('droite')
-            self.raquette.move_by(self.raquette.vitesse_raquette)
 
     def update_raquette_graphics(self):
         x_center = self.raquette.get_x_center()
