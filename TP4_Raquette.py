@@ -39,9 +39,12 @@ class Raquette:
 
     def deplacement_barre(self, event):
         # event.keysym fournit 'Left'/'Right' etc
+        print(event.keysym, event.keycode)
         key = event.keysym
-        if key in ('Left', 'q', 'a'):
+        if key in ('Left', 'q'):
+            print('gauche')
             self.move_by(-self.vitesse_raquette)
         elif key in ('Right', 'd'):
+            print('droite')
             self.move_by(self.vitesse_raquette)
         # aussi souris: handled from fenetre (optionnel)

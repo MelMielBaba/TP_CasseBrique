@@ -219,12 +219,11 @@ class FenetreJeu(ttk.Frame):
         # Canvas
         self.canvas = tk.Canvas(self, width=c.LARGEUR_CANVA, height=c.HAUTEUR_CANVA, bg="black")
         self.canvas.pack(pady=6)
-        self.canvas.focus_set()
 
         # raquette & input
         self.raquette = Raquette(c.LARGEUR_CANVA, c.HAUTEUR_CANVA)
-        self.canvas.bind('<Key>', self.raquette.deplacement_barre)
-        self.canvas.bind('<Motion>', self.souris_mouvement)
+        self.canvas.bind('<Key>', self.deplacement_barre)
+        #self.canvas.bind('<Motion>', self.souris_mouvement)
 
         # dessiner la raquette (graphique)
         x_center = self.raquette.get_x_center()
@@ -252,6 +251,9 @@ class FenetreJeu(ttk.Frame):
 
     def on_show(self):
         """Appelé quand la fenêtre devient visible : on reprend le jeu (dépauser)."""
+        #On demarre le focus du canvas ici pour etre sur qu'il 'ecoute' bien les input clavier
+        self.canvas.focus_set()
+        print("Widget avec le focus:", self.canvas.focus_get())
         # Recréer le niveau si les constantes ont changé (comme avant)
         try:
             try:
@@ -297,6 +299,17 @@ class FenetreJeu(ttk.Frame):
 
     def souris_mouvement(self, event):
         self.raquette.set_x_center(event.x)
+    
+    def deplacement_barre(self, event):
+        # event.keysym fournit 'Left'/'Right' etc
+        print(event.keysym, event.keycode)
+        key = event.keysym
+        if key in ('Left', 'q'):
+            print('gauche')
+            self.raquette.move_by(-self.raquette.vitesse_raquette)
+        elif key in ('Right', 'd'):
+            print('droite')
+            self.raquette.move_by(self.raquette.vitesse_raquette)
 
     def update_raquette_graphics(self):
         x_center = self.raquette.get_x_center()
@@ -346,7 +359,7 @@ class FenetreJeu(ttk.Frame):
         hit = self.brique_manager.collision(self.balle)
         if hit is not None:
             self.balle.rebond_y()
-            self.score += 10
+            self.score += 1
             self.score_var.set(f"Score : {self.score}")
 
     def game_over(self):
