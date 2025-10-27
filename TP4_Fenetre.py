@@ -219,8 +219,10 @@ class FenetreJeu(ttk.Frame):
         ttk.Label(top_bar, textvariable=self.lives_var, font=("Arial", 12, "bold")).pack(side="left", padx=20)
 
         #Creation des boutons
-        ttk.Button(bottom_bar, text="Retour", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
-        ttk.Button(bottom_bar, text="Quitter", command=app.destroy).pack(side="left", padx=6)
+        ttk.Button(bottom_bar, text="RETOUR", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
+        ttk.Button(bottom_bar, text="LANCER",command=self.lancer_game).pack(side="left", padx=6)
+        ttk.Button(bottom_bar, text="PAUSE",command=self.arreter_game).pack(side="left", padx=6)
+        ttk.Button(bottom_bar, text="QUITTER", command=app.destroy).pack(side="left", padx=6)
 
         #Creation du canvas
         self.canvas = tk.Canvas(self, width=c.LARGEUR_CANVA, height=c.HAUTEUR_CANVA, bg="black")
@@ -249,7 +251,7 @@ class FenetreJeu(ttk.Frame):
         self.balle = Balle(self.canvas, x=x_center, y=y - 30)
 
         #Etat jeu
-        self.running = True         # indique que le jeu est actif (non game-over)
+        self.running = False         # indique que le jeu est actif (non game-over)
         self.paused = True          # << important : start en pause (car l'écran d'accueil est probablement visible)
         self.delay = c.FPS_DELAY_MS
         self._after_id = None       # stockage de l'ID retourné par after pour pouvoir annuler
@@ -402,8 +404,9 @@ class FenetreJeu(ttk.Frame):
         Entree : None
         Sortie : None
         """
-        self.running = False
+        self.arreter_game()
         messagebox.showinfo("Game Over", f"Game over!\nScore: {self.score}")
+        # On recrée un niveau prêt à jouer, mais en pause
         self.restart_game()
 
     def restart_game(self):
@@ -413,23 +416,40 @@ class FenetreJeu(ttk.Frame):
         Entree : None
         Sortie : None
         """
+        #Reinitialisation des parametres
         self.score = 0
         self.score_var.set(f"Score : {self.score}")
         self.lives = c.NOMBRE_VIES
         self.lives_var.set(f"Vies : {self.lives}")
+
+        #Effacer toutes les briques et en recréer de nouvelles
         try:
             self.brique_manager.clear_all()
         except Exception:
             pass
+
         self.brique_manager = BriqueManager(self.canvas,
                                            lignes=c.LIGNES, colonnes=c.COLONNES,
                                            largeur_brique=c.LARGEUR_BRIQUE, hauteur_brique=c.HAUTEUR_BRIQUE,
                                            top_offset=c.TOP_OFFSET, padding=c.PADDING)
+        
+        #Reinitialise la balle au-dessus de la raquette
         self.balle.reset(x=self.raquette.get_x_center(), y=self.raquette.y - 30)
-        self.running = True
-        # si on est visible (pas en pause) relancer la boucle
-        if not self.paused and self._after_id is None:
-            self._schedule_next_frame()
+        
+        # Mise à jour graphique de la raquette (au cas où)
+        self.update_raquette_graphics()
+
+        # On stoppe la boucle (pas de mouvement)
+        self.paused = True
+        self.running = False
+
+        # S'assurer qu'aucun after ne reste planifié
+        if self._after_id is not None:
+            try:
+                self.after_cancel(self._after_id)
+            except Exception:
+                pass
+        self._after_id = None
 
     def game_loop(self):
         """
@@ -450,10 +470,46 @@ class FenetreJeu(ttk.Frame):
         self.check_collisions()
 
         if self.brique_manager.reste() == 0:
+            self.arreter_game()
             messagebox.showinfo("Victoire", f"Bravo ! Tu as détruit toutes les briques.\nScore: {self.score}")
-            self.restart_game()
+            self.restart_game()  # Prépare le nouveau niveau (sans le lancer)
             return
 
         # replanifier prochain frame
         self._schedule_next_frame()
 
+    def lancer_game(self):
+        """
+        Fonction : Active le jeu et s'assure qu'une itération est planifiée
+        Entree : None
+        Sortie : 
+        """
+        self.running = True
+        # dépauser si besoin
+        self.paused = False
+        # Si aucune itération n'est planifiée, en créer une
+        if self._after_id is None:
+            self._schedule_next_frame()
+        # donner le focus au canvas pour capter le clavier
+        try:
+            self.canvas.focus_set()
+        except Exception:
+            pass
+    
+    def arreter_game(self):
+        """
+        Fonction : Désactive le jeu et annule l'after en attente pour arrêter 
+        proprement la boucle
+        Entree : None
+        Sortie : 
+        """
+        self.running = False
+        # Optionnel : mettre en pause aussi
+        self.paused = True
+        # annuler l'after s'il existe
+        if self._after_id is not None:
+            try:
+                self.after_cancel(self._after_id)
+            except Exception:
+                pass
+            self._after_id = None
