@@ -196,36 +196,42 @@ class FenetreOption(ttk.Frame):
 
 class FenetreJeu(ttk.Frame):
     def __init__(self, parent, app):
+        #Heritage de la fenetre tkinter
         super().__init__(parent)
         self.app = app
 
+        #Barres d'affichage
+        #►Haut - Score et vies
         top_bar = ttk.Frame(self, padding=(8, 8))
         top_bar.pack(fill="x")
+        #►Bas - Boutons
+        bottom_bar = ttk.Frame(self, padding=(8, 8))
+        bottom_bar.pack(side="bottom", fill="x")
 
+        #Initiation du score et affichage
         self.score = 0
         self.score_var = tk.StringVar(value=f"Score : {self.score}")
         ttk.Label(top_bar, textvariable=self.score_var, font=("Arial", 12, "bold")).pack(side="left", padx=8)
 
+        #Initiation des vies et affichage
         self.lives = c.NOMBRE_VIES
         self.lives_var = tk.StringVar(value=f"Vies : {self.lives}")
         ttk.Label(top_bar, textvariable=self.lives_var, font=("Arial", 12, "bold")).pack(side="left", padx=20)
 
-        bottom_bar = ttk.Frame(self, padding=(8, 8))
-        bottom_bar.pack(side="bottom", fill="x")
-
+        #Creation des boutons
         ttk.Button(bottom_bar, text="Retour", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
         ttk.Button(bottom_bar, text="Quitter", command=app.destroy).pack(side="left", padx=6)
 
-        # Canvas
+        #Creation du canvas
         self.canvas = tk.Canvas(self, width=c.LARGEUR_CANVA, height=c.HAUTEUR_CANVA, bg="black")
         self.canvas.pack(pady=6)
 
-        # raquette & input
+        #Initiation de la raquette & gestion des inputs
         self.raquette = Raquette(c.LARGEUR_CANVA, c.HAUTEUR_CANVA)
-        self.canvas.bind('<Key>', self.raquette.deplacement_barre)
-        #self.canvas.bind('<Motion>', self.souris_mouvement)
+        self.canvas.bind('<Key>', self.raquette.deplacement_barre) #controle clavier
+        #self.canvas.bind('<Motion>', self.souris_mouvement) #controle souris
 
-        # dessiner la raquette (graphique)
+        #Dessin de la raquette (graphique)
         x_center = self.raquette.get_x_center()
         half = self.raquette.largeur_raquette / 2
         y = self.raquette.y
@@ -235,14 +241,14 @@ class FenetreJeu(ttk.Frame):
             fill="red"
         )
 
-        # briques & balle — instanciation initiale (ne démarre pas la boucle)
+        #Briques & balle — instanciation initiale (ne démarre pas la boucle)
         self.brique_manager = BriqueManager(self.canvas,
                                            lignes=c.LIGNES, colonnes=c.COLONNES,
                                            largeur_brique=c.LARGEUR_BRIQUE, hauteur_brique=c.HAUTEUR_BRIQUE,
                                            top_offset=c.TOP_OFFSET, padding=c.PADDING)
         self.balle = Balle(self.canvas, x=x_center, y=y - 30)
 
-        # état jeu
+        #Etat jeu
         self.running = True         # indique que le jeu est actif (non game-over)
         self.paused = True          # << important : start en pause (car l'écran d'accueil est probablement visible)
         self.delay = c.FPS_DELAY_MS
@@ -250,40 +256,51 @@ class FenetreJeu(ttk.Frame):
         # NE PAS appeler self.after ici : on démarrera la boucle dans on_show()
 
     def on_show(self):
-        """Appelé quand la fenêtre devient visible : on reprend le jeu (dépauser)."""
+        """
+        Fonction : Appelée quand la fenêtre devient visible : on reprend le jeu (dépauser)
+        Entree : None
+        Sortie : None
+        """
         #On demarre le focus du canvas ici pour etre sur qu'il 'ecoute' bien les input clavier
         self.canvas.focus_set()
-        print("Widget avec le focus:", self.canvas.focus_get())
-        # Recréer le niveau si les constantes ont changé (comme avant)
+        #Recréer le niveau si les constantes ont changé (comme avant)
         try:
             try:
                 self.brique_manager.clear_all()
             except Exception:
                 pass
 
+            #Réarranger les briques
             self.brique_manager = BriqueManager(self.canvas,
                                                lignes=c.LIGNES, colonnes=c.COLONNES,
                                                largeur_brique=c.LARGEUR_BRIQUE, hauteur_brique=c.HAUTEUR_BRIQUE,
                                                top_offset=c.TOP_OFFSET, padding=c.PADDING)
-            # repositionner la balle au-dessus de la raquette
-            # remplacer l'ancienne balle par une nouvelle avec le rayon modifié
+            
             try:
                 self.canvas.delete(self.balle.id)
             except Exception:
                 pass
-            self.balle = Balle(self.canvas, x=self.raquette.get_x_center(), y=self.raquette.y - 30, rayon=c.RAYON_BALLE)
 
+            #Repositionne la balle au-dessus de la raquette en lui appliquant les nouveaux parametres
+            self.balle = Balle(self.canvas, x=self.raquette.get_x_center(), y=self.raquette.y - 30, rayon=c.RAYON_BALLE)
+            
+            #Mise a jour du dessin
             self.update_raquette_graphics()
+
         except Exception as e:
             print("Erreur on_show FenetreJeu:", e)
 
-        # reprendre le jeu : dépauser et lancer la boucle si nécessaire
+        #Reprise du jeu : dépauser et lancer la boucle si nécessaire
         self.paused = False
         if self._after_id is None:
             self._schedule_next_frame()
 
     def on_hide(self):
-        """Appelé quand on quitte la fenêtre : mettre le jeu en pause."""
+        """
+        Fonction : Appelée quand on quitte la fenêtre : mettre le jeu en pause
+        Entree : None
+        Sortie : None
+        """
         self.paused = True
         # annuler l'after en attente pour que rien ne tourne en arrière-plan
         if self._after_id is not None:
@@ -294,35 +311,62 @@ class FenetreJeu(ttk.Frame):
             self._after_id = None
 
     def _schedule_next_frame(self):
-        """Planifie la prochaine itération de la boucle et conserve l'id."""
+        """
+        Fonction : Planifie la prochaine itération de la boucle et conserve l'id
+        Entree : None
+        Sortie : None
+        """
         self._after_id = self.after(self.delay, self.game_loop)
 
     def souris_mouvement(self, event):
+        """
+        Fonction : Gestion du deplacement de la raquette avec les mouvement de la souris
+        Entree : None
+        Sortie : None
+        """
         self.raquette.set_x_center(event.x)
 
     def update_raquette_graphics(self):
+        """
+        Fonction : Mise a jour du dessin de la raquette
+        Entree : None
+        Sortie : None
+        """
+        #Redefinition des nouveaux parametres
         x_center = self.raquette.get_x_center()
         half = self.raquette.largeur_raquette / 2
         y = self.raquette.y
+
+        #Actualisation des parametre de l'affichage du dessin
         self.canvas.coords(self.raillet,
                            x_center - half, y - self.raquette.hauteur_raquette/2,
                            x_center + half, y + self.raquette.hauteur_raquette/2)
 
     def check_collisions(self):
-        # collision murs
+        """
+        Fonction : Verification des collisions de la balle avec les murs (haut, 
+        gauche, droit), la raquette, les briques, et le cas de perte de balle 
+        (mur bas)
+        Entree : None
+        Sortie : None
+        """
+        #Collisions des murs
         l, t, r, b = self.balle.coords()
+        #rebond gauche
         if l <= 0:
             self.balle.rebond_x()
             self.balle.x = self.balle.rayon
-        if r >= c.LARGEUR_CANVA:
+        #rebond droite
+        elif r >= c.LARGEUR_CANVA:
             self.balle.rebond_x()
             self.balle.x = c.LARGEUR_CANVA - self.balle.rayon
-        if t <= 0:
+        #rebond haut
+        elif t <= 0:
             self.balle.rebond_y()
             self.balle.y = self.balle.rayon
 
-        # bas -> perte de vie
-        if b >= c.HAUTEUR_CANVA:
+        #rebond bas -> perte de vie
+        elif b >= c.HAUTEUR_CANVA:
             self.lives -= 1
             self.lives_var.set(f"Vies : {self.lives}")
             if self.lives <= 0:
@@ -332,7 +376,7 @@ class FenetreJeu(ttk.Frame):
                 self.balle.reset(x=self.raquette.get_x_center(), y=self.raquette.y - 30)
                 return
 
-        # collision raquette
+        #Collisions avec la raquette
         rx1, ry1, rx2, ry2 = self.canvas.coords(self.raillet)
         bx1, by1, bx2, by2 = self.balle.coords()
         if not (bx2 < rx1 or bx1 > rx2 or by2 < ry1 or by1 > ry2):
@@ -344,7 +388,7 @@ class FenetreJeu(ttk.Frame):
             self.balle.vx += delta * max_horizontal
             self.balle.y = ry1 - self.balle.rayon - 1
 
-        # collision briques
+        #Collision avec les briques
         hit = self.brique_manager.collision(self.balle)
         if hit is not None:
             self.balle.rebond_y()
@@ -352,11 +396,23 @@ class FenetreJeu(ttk.Frame):
             self.score_var.set(f"Score : {self.score}")
 
     def game_over(self):
+        """
+        Fonction : Passe l'attribut running en False et affiche la messagebox 
+        de fin de partie en cas de defaite
+        Entree : None
+        Sortie : None
+        """
         self.running = False
         messagebox.showinfo("Game Over", f"Game over!\nScore: {self.score}")
         self.restart_game()
 
     def restart_game(self):
+        """
+        Fonction : Reinitialise les parametre de score et de vie, recreer de 
+        nouvelles briques
+        Entree : None
+        Sortie : None
+        """
         self.score = 0
         self.score_var.set(f"Score : {self.score}")
         self.lives = c.NOMBRE_VIES
@@ -376,6 +432,11 @@ class FenetreJeu(ttk.Frame):
             self._schedule_next_frame()
 
     def game_loop(self):
+        """
+        Fonction : Gestion de la boucle de jeu
+        Entree : None
+        Sortie : None
+        """
         # clear after id (car on est dans l'itération déclenchée)
         self._after_id = None
 
