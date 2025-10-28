@@ -142,13 +142,13 @@ class FenetreDemarrage(ttk.Frame):
         ttk.Button(bnt_barre, text="QUITTER", command=app.destroy).pack(side="left",padx=10)
 
         #Gestion de l'image de fond
-        self.photo = None #pour garder une reference
+        self.photo = None       #pour garder une reference
         self.img_dict = {}
         self.canvas = tk.Canvas(self, width=c.LARGEUR_CANVA, height=c.HAUTEUR_CANVA, bg="black")
         self.canvas.pack(pady=6)
 
         #Affichage de l'image dès l'initialisation
-        #self.ouvrir_image()
+        self.ouvrir_image()
     
     def ouvrir_image(self):
         """
@@ -156,28 +156,46 @@ class FenetreDemarrage(ttk.Frame):
         Entree : None
         Sortie : None
         """
-        #filename = filedialog.askopenfilename(title="Ouvrir l'image", filetypes=[("Images JPEG","*.jpeg"),("Tous types","*.*")])
+        try:
+            #Charge l'image originale
+            image = tk.PhotoImage(file="casseBrique_imageDemarrage.gif")
 
-        # Efface le canvas
-        self.canvas.delete("all")
+            #Redimensionnement de l'image
+            image_redim = self.redimensionner_image(image)
 
-        # Demande un fichier image
-        filename = filedialog.askopenfilename(title="Ouvrir l'image",
-                                              filetypes=[("Images PNG", "*.png"), ("Tous types", "*.*")])
+            #Garde une référence
+            self.photo = image_redim
 
-        if not filename:
-            return  # annulation
+            #Efface le canvas et affiche l'image centrée
+            self.canvas.delete("all")
+            self.canvas.create_image(c.LARGEUR_CANVA//2, c.HAUTEUR_CANVA//2, anchor=tk.CENTER, image=self.photo)
 
-        self.photo = tk.PhotoImage(file=filename)
+        except tk.TclError:
+            print("/!\ Impossible de charger l'image! Vérifier qu'elle est bien dans le même dossier!")
+            return
     
-        # Conserve une référence pour éviter le garbage collection
-        self.img_dict[filename] = self.photo
+    def redimensionner_image(self, image):
+        """
+        Fonction : Redimensionne une image PhotoImage pour qu'elle tienne dans le canvas,
+        uniquement par réduction (via subsample, donc facteur entier); Retourne l'image 
+        réduite
+        Entree : L'image à redimmensionner
+        Sortie : L'image redimmensionnée
+        """
+        #Recuperation des largeur et hauteur
+        img_w, img_h = image.width(), image.height()
+        can_w, can_h = c.LARGEUR_CANVA, c.HAUTEUR_CANVA
 
-        # Affiche l'image en haut à gauche
-        self.canvas.create_image(0, 0, anchor=tk.NW, image=self.photo)
+        #Si l'image est plus grande que le canvas → réduction
+        if img_w > can_w or img_h > can_h:
+            #Calcul du facteur de réduction entier
+            scale_x = max(1, img_w // can_w)
+            scale_y = max(1, img_h // can_h)
+            scale = max(scale_x, scale_y)
+            image = image.subsample(scale, scale)
 
-        # Ajuste la taille du canvas
-        self.canvas.config(width=self.photo.width(), height=self.photo.height())
+        #Retourne l'image redimmensionnée
+        return image
 
 #►►CREATION FENETRE DU MENU DES OPTIONS◄◄
 class FenetreOption(ttk.Frame):
