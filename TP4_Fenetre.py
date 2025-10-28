@@ -10,27 +10,23 @@ Titre: Fichier principal de la gestion du jeu
 =========================================================================================
 Description :
     Fichier principal pour lancer le Casse-Brique (version avec options modifiables).
-    Utilise : TP4_Constantes.py,
-    Cree les instances issues des fichier: TP4_Raquette.py, TP4_Balle.py, TP4_Briques.py
+    Utilise les constantes de TP4_Constantes.py,
+    Cree les instances issues des fichier: TP4_Raquette.py, TP4_Balle.py, TP4_Briques.py.
 =========================================================================================
 """
 
 #►►IMPORTATIONS◄◄
 """Importation des fichiers"""
 import TP4_Constantes as c
-from TP4_Raquette import Raquette
-from TP4_Balle import Balle
-from TP4_Briques import BriqueManager
+from TP4_Raquette import Raquette as R
+from TP4_Balle import Balle as Bl
+from TP4_Briques import BriqueManager as BrM
 
 """Importation des modules"""
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from collections import deque
 import random as rd
-#from PIL import Image, ImageTk  # pour supporter JPEG
-
-#►►CONSTANTES STR◄◄
-APP_TITLE = "Casse Brique"
 
 #►►CREATION GESTIONNAIRE FENETRE TKINTER◄◄
 class App(tk.Tk):
@@ -43,19 +39,19 @@ class App(tk.Tk):
     def __init__(self):
         #Creation de la fenetre tkinter
         super().__init__()
-        self.title(APP_TITLE)
+        self.title(c.APP_TITLE)
         self.resizable(False, False)
 
         #Creation du conteneur des frames
         container = ttk.Frame(self)
-        container.pack(fill="both", expand=True)
+        container.pack(fill = "both", expand = True)
 
         #Creation d'un dictionnaire stockant les objets fenetres
         self.frames = {}
         for F in (FenetreDemarrage, FenetreOption, FenetreJeu):
-            frame = F(parent=container, app=self)
+            frame = F(parent = container, app = self)
             self.frames[F.__name__] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
+            frame.grid(row = 0, column = 0, sticky = "nsew")
 
         #Affichage de la premiere fenetre
         self.show_frame("FenetreDemarrage")
@@ -120,45 +116,47 @@ class FenetreDemarrage(ttk.Frame):
     n'est pour le moment pas aboutie ni opérationnelle)
     Attributs : > self.app : reference a la fenetre tkinter de App() [?]
                 > self.photo : la reference de l'image dans tkinter
-                > self.img_dict : le dictionnaire pour referer l'image
                 > self.canvas : le canvas pour placer l'image
     Methodes : > ouvrir_image() : permet d'afficher l'image dans le canvas
     """
     def __init__(self, parent, app):
         #Heritage du module et reference a la fenetre tkinter App()
-        super().__init__(parent, padding=20)
+        super().__init__(parent, padding = 20)
         self.app = app
 
         #Titre du jeu
-        ttk.Label(self, text=APP_TITLE, font=("Arial", 24, "bold")).pack(pady=20)
+        ttk.Label(self, text = c.APP_TITLE, font = ("Arial", 24, "bold")).pack(pady = 20)
 
         #Barre des boutons
         bnt_barre = ttk.Frame(self)
-        bnt_barre.pack(pady=12)
+        bnt_barre.pack(pady = 12)
 
         #Boutons
-        ttk.Button(bnt_barre, text="JOUER", command=lambda: app.show_frame("FenetreJeu")).pack(side="left",padx=10)
-        ttk.Button(bnt_barre, text="OPTIONS", command=lambda: app.show_frame("FenetreOption")).pack(side="left",padx=10)
-        ttk.Button(bnt_barre, text="QUITTER", command=app.destroy).pack(side="left",padx=10)
+        ttk.Button(bnt_barre, text = "JOUER", command = lambda: app.show_frame("FenetreJeu")).pack(side = "left",padx = 10)
+        ttk.Button(bnt_barre, text = "OPTIONS", command = lambda: app.show_frame("FenetreOption")).pack(side = "left",padx = 10)
+        ttk.Button(bnt_barre, text = "QUITTER", command = app.destroy).pack(side = "left",padx = 10)
 
         #Gestion de l'image de fond
         self.photo = None       #pour garder une reference
-        self.img_dict = {}
-        self.canvas = tk.Canvas(self, width=c.LARGEUR_CANVA, height=c.HAUTEUR_CANVA, bg="black")
-        self.canvas.pack(pady=6)
+        self.canvas = tk.Canvas(self, 
+                                width = c.LARGEUR_CANVA, 
+                                height = c.HAUTEUR_CANVA, 
+                                bg = "black")
+        self.canvas.pack(pady = 6)
 
         #Affichage de l'image dès l'initialisation
         self.ouvrir_image()
     
     def ouvrir_image(self):
         """
-        Fonction : 
+        Fonction : Ouvrir l'image, appeller la fonction pour la redimmensionner, et 
+        l'afficher dans le canvas
         Entree : None
         Sortie : None
         """
         try:
             #Charge l'image originale
-            image = tk.PhotoImage(file="casseBrique_imageDemarrage.gif")
+            image = tk.PhotoImage(file = "casseBrique_imageDemarrage.gif")
 
             #Redimensionnement de l'image
             image_redim = self.redimensionner_image(image)
@@ -168,10 +166,13 @@ class FenetreDemarrage(ttk.Frame):
 
             #Efface le canvas et affiche l'image centrée
             self.canvas.delete("all")
-            self.canvas.create_image(c.LARGEUR_CANVA//2, c.HAUTEUR_CANVA//2, anchor=tk.CENTER, image=self.photo)
+            self.canvas.create_image(c.LARGEUR_CANVA//2, 
+                                     c.HAUTEUR_CANVA//2, 
+                                     anchor = tk.CENTER, 
+                                     image = self.photo)
 
         except tk.TclError:
-            print("/!\ Impossible de charger l'image! Vérifier qu'elle est bien dans le même dossier!")
+            print("Impossible de charger l'image! Vérifier qu'elle est bien dans le même dossier!")
             return
     
     def redimensionner_image(self, image):
@@ -219,15 +220,15 @@ class FenetreOption(ttk.Frame):
     """
     def __init__(self, parent, app):
         #Heritage du module et reference a la fenetre tkinter App()
-        super().__init__(parent, padding=16)
+        super().__init__(parent, padding = 16)
         self.app = app
 
         #Titre du menu
-        ttk.Label(self, text="Options", font=("Arial", 20, "bold")).pack(pady=(0,12))
+        ttk.Label(self, text = "Options", font = ("Arial", 20, "bold")).pack(pady = (0,12))
 
         #Frame pour placer les paramètres modifiable
         frame_params = ttk.Frame(self)
-        frame_params.pack(pady=6, padx=6, fill="x")
+        frame_params.pack(pady = 6, padx = 6, fill = "x")
 
         #Fonction pour créer ligne label & spinbox
         def make_spin(parent, label_text, var_init, from_, to_, increment=1):
@@ -242,14 +243,14 @@ class FenetreOption(ttk.Frame):
             """
             #on creer un frame pour placer la spinbox
             row = ttk.Frame(parent)
-            row.pack(fill="x", pady=4)
+            row.pack(fill = "x", pady = 4)
 
             #on ajoute un titre a la ligne
-            ttk.Label(row, text=label_text, width=20, anchor="w").pack(side="left")
+            ttk.Label(row, text = label_text, width = 20, anchor = "w").pack(side = "left")
 
             #on creer la spinbox
-            sb = tk.Spinbox(row, from_=from_, to=to_, increment=increment, width=8)
-            sb.pack(side="left")
+            sb = tk.Spinbox(row, from_ = from_, to = to_, increment = increment, width = 8)
+            sb.pack(side = "left")
             sb.delete(0, "end")
             sb.insert(0, str(var_init))
 
@@ -266,17 +267,17 @@ class FenetreOption(ttk.Frame):
 
         #Barre où placer les boutons
         btn_row = ttk.Frame(self)
-        btn_row.pack(pady=12)
+        btn_row.pack(pady = 12)
 
         #Boutons
-        ttk.Button(btn_row, text="APPLIQUER", command=self.apply_changes).pack(side="left", padx=6)
-        ttk.Button(btn_row, text="REINITIALISER", command=self.reset_defaults).pack(side="left", padx=6)
-        ttk.Button(btn_row, text="RETOUR", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
-        ttk.Button(btn_row, text="JOUER", command=lambda: app.show_frame("FenetreJeu")).pack(side="left", padx=6)
-        ttk.Button(btn_row, text="QUITTER", command=app.destroy).pack(side="left", padx=6)
+        ttk.Button(btn_row, text = "APPLIQUER", command = self.apply_changes).pack(side = "left", padx = 6)
+        ttk.Button(btn_row, text = "REINITIALISER", command = self.reset_defaults).pack(side="left", padx = 6)
+        ttk.Button(btn_row, text = "RETOUR", command = lambda: app.show_frame("FenetreDemarrage")).pack(side = "left", padx = 6)
+        ttk.Button(btn_row, text = "JOUER", command = lambda: app.show_frame("FenetreJeu")).pack(side = "left", padx = 6)
+        ttk.Button(btn_row, text = "QUITTER", command = app.destroy).pack(side = "left", padx = 6)
 
         #Affichage d'un texte donnant des indications en remarques
-        ttk.Label(self, text="Les modifications s'appliquent quand on retourne à la fenêtre du jeu.", foreground="gray").pack(pady=(8,0))
+        ttk.Label(self, text = "Les modifications s'appliquent quand on retourne à la fenêtre du jeu.", foreground = "gray").pack(pady = (8,0))
 
     def apply_changes(self):
         """
@@ -364,43 +365,46 @@ class FenetreJeu(ttk.Frame):
 
         #►BARRES D'AFFICHAGE◄
         """Haut - Score et vies"""
-        top_bar = ttk.Frame(self, padding=(8, 8))
-        top_bar.pack(fill="x")
+        top_bar = ttk.Frame(self, padding = (8, 8))
+        top_bar.pack(fill = "x")
         """Bas - Boutons"""
-        bottom_bar = ttk.Frame(self, padding=(8, 8))
-        bottom_bar.pack(side="bottom", fill="x")
+        bottom_bar = ttk.Frame(self, padding = (8, 8))
+        bottom_bar.pack(side = "bottom", fill = "x")
 
         #►PILE & FILE◄
         """Pile pour enregistrement des scores; File pour les bonus des briques"""
-        self.historique_scores = []   # pile (LIFO)
-        self.file_bonus = deque()     # file (FIFO)
+        self.historique_scores = []   #◊PILE◊ (LIFO)
+        self.file_bonus = deque()     #◊FILE◊ (FIFO)
 
         #►SCORE◄
         """Initialisation & affichage"""
         self.score = 0
-        self.score_var = tk.StringVar(value=f"Score : {self.score}")
-        ttk.Label(top_bar, textvariable=self.score_var, font=("Arial", 12, "bold")).pack(side="left", padx=8)
+        self.score_var = tk.StringVar(value = f"Score : {self.score}")
+        ttk.Label(top_bar, textvariable = self.score_var, font = ("Arial", 12, "bold")).pack(side = "left", padx = 8)
 
         #►VIES◄
         """Initialisation & affichage"""
         self.lives = c.NOMBRE_VIES
-        self.lives_var = tk.StringVar(value=f"Vies : {self.lives}")
-        ttk.Label(top_bar, textvariable=self.lives_var, font=("Arial", 12, "bold")).pack(side="left", padx=20)
+        self.lives_var = tk.StringVar(value = f"Vies : {self.lives}")
+        ttk.Label(top_bar, textvariable = self.lives_var, font = ("Arial", 12, "bold")).pack(side = "right", padx = 20)
 
         #►BOUTONS◄
-        ttk.Button(bottom_bar, text="RETOUR", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
-        ttk.Button(bottom_bar, text="LANCER",command=self.lancer_game).pack(side="left", padx=6)
-        ttk.Button(bottom_bar, text="PAUSE",command=self.arreter_game).pack(side="left", padx=6)
-        ttk.Button(bottom_bar, text="Annuler Score", command=self.supprimer_dernier_score).pack(side="left", padx=6)
-        ttk.Button(bottom_bar, text="QUITTER", command=app.destroy).pack(side="left", padx=6)
+        ttk.Button(bottom_bar, text = "RETOUR", command = lambda: app.show_frame("FenetreDemarrage")).pack(side = "left", padx = 6)
+        ttk.Button(bottom_bar, text = "LANCER",command = self.lancer_game).pack(side = "left", padx = 6)
+        ttk.Button(bottom_bar, text = "PAUSE",command = self.arreter_game).pack(side = "left", padx = 6)
+        ttk.Button(bottom_bar, text = "Annuler Score", command = self.supprimer_dernier_score).pack(side = "left", padx = 6)
+        ttk.Button(bottom_bar, text = "QUITTER", command = app.destroy).pack(side = "left", padx = 6)
 
         #►CANVAS◄
-        self.canvas = tk.Canvas(self, width=c.LARGEUR_CANVA, height=c.HAUTEUR_CANVA, bg="black")
-        self.canvas.pack(pady=6)
+        self.canvas = tk.Canvas(self, 
+                                width = c.LARGEUR_CANVA, 
+                                height = c.HAUTEUR_CANVA, 
+                                bg = "black")
+        self.canvas.pack(pady = 6)
 
         #►RAQUETTE◄
         """Initialisation de la raquette & gestion des inputs"""
-        self.raquette = Raquette(c.LARGEUR_CANVA, c.HAUTEUR_CANVA)
+        self.raquette = R(c.LARGEUR_CANVA, c.HAUTEUR_CANVA)
         self.canvas.bind('<Key>', self.raquette.deplacement_barre) #controle clavier
         #self.canvas.bind('<Motion>', self.souris_mouvement) #controle souris
 
@@ -408,22 +412,25 @@ class FenetreJeu(ttk.Frame):
         x_center = self.raquette.get_x_center()
         half = self.raquette.largeur_raquette / 2
         y = self.raquette.y
-        self.raillet = self.canvas.create_rectangle(
-            x_center - half, y - self.raquette.hauteur_raquette/2,
-            x_center + half, y + self.raquette.hauteur_raquette/2,
-            fill="red"
-        )
+        self.raillet = self.canvas.create_rectangle(x_center - half, 
+                                                    y - self.raquette.hauteur_raquette/2,
+                                                    x_center + half, 
+                                                    y + self.raquette.hauteur_raquette/2,
+                                                    fill = "red")
 
         #►BRIQUES◄
         """Instanciation initiale (ne démarre pas la boucle)"""
-        self.brique_manager = BriqueManager(self.canvas,
-                                           lignes=c.LIGNES, colonnes=c.COLONNES,
-                                           largeur_brique=c.LARGEUR_BRIQUE, hauteur_brique=c.HAUTEUR_BRIQUE,
-                                           top_offset=c.TOP_OFFSET, padding=c.PADDING)
+        self.brique_manager = BrM(self.canvas,
+                                  lignes = c.LIGNES, 
+                                  colonnes = c.COLONNES,
+                                  largeur_brique = c.LARGEUR_BRIQUE, 
+                                  hauteur_brique = c.HAUTEUR_BRIQUE,
+                                  top_offset = c.TOP_OFFSET, 
+                                  padding = c.PADDING)
         
         #►BALLE◄
         """Instanciation initiale (ne démarre pas la boucle)"""
-        self.balle = Balle(self.canvas, x=x_center, y=y - 30)
+        self.balle = Bl(self.canvas, x = x_center, y = y - 30)
 
         #►ETAT DU JEU◄
         """Running & pause"""
@@ -448,10 +455,13 @@ class FenetreJeu(ttk.Frame):
                 pass
 
             #Réarranger les briques
-            self.brique_manager = BriqueManager(self.canvas,
-                                               lignes=c.LIGNES, colonnes=c.COLONNES,
-                                               largeur_brique=c.LARGEUR_BRIQUE, hauteur_brique=c.HAUTEUR_BRIQUE,
-                                               top_offset=c.TOP_OFFSET, padding=c.PADDING)
+            self.brique_manager = BrM(self.canvas,
+                                      lignes = c.LIGNES, 
+                                      colonnes = c.COLONNES,
+                                      largeur_brique = c.LARGEUR_BRIQUE, 
+                                      hauteur_brique = c.HAUTEUR_BRIQUE,
+                                      top_offset = c.TOP_OFFSET, 
+                                      padding = c.PADDING)
             
             try:
                 self.canvas.delete(self.balle.id)
@@ -459,7 +469,10 @@ class FenetreJeu(ttk.Frame):
                 pass
 
             #Repositionne la balle au-dessus de la raquette en lui appliquant les nouveaux parametres
-            self.balle = Balle(self.canvas, x=self.raquette.get_x_center(), y=self.raquette.y - 30, rayon=c.RAYON_BALLE)
+            self.balle = Bl(self.canvas, 
+                            x = self.raquette.get_x_center(), 
+                            y = self.raquette.y - 30, 
+                            rayon = c.RAYON_BALLE)
             
             #Mise a jour du dessin
             self.update_raquette_graphics()
@@ -518,8 +531,10 @@ class FenetreJeu(ttk.Frame):
 
         #Actualisation des parametre de l'affichage du dessin
         self.canvas.coords(self.raillet,
-                           x_center - half, y - self.raquette.hauteur_raquette/2,
-                           x_center + half, y + self.raquette.hauteur_raquette/2)
+                           x_center - half, 
+                           y - self.raquette.hauteur_raquette/2,
+                           x_center + half, 
+                           y + self.raquette.hauteur_raquette/2)
 
     def check_collisions(self):
         """
@@ -555,7 +570,8 @@ class FenetreJeu(ttk.Frame):
                 self.game_over()
                 return
             else:
-                self.balle.reset(x=self.raquette.get_x_center(), y=self.raquette.y - 30)
+                self.balle.reset(x = self.raquette.get_x_center(), 
+                                 y = self.raquette.y - 30)
                 return
 
         #COLLISIONS AVEC LA RAQUETTE
@@ -644,13 +660,16 @@ class FenetreJeu(ttk.Frame):
             pass
         
         #Creation d'un nouveau gestionnaire de briques
-        self.brique_manager = BriqueManager(self.canvas,
-                                           lignes=c.LIGNES, colonnes=c.COLONNES,
-                                           largeur_brique=c.LARGEUR_BRIQUE, hauteur_brique=c.HAUTEUR_BRIQUE,
-                                           top_offset=c.TOP_OFFSET, padding=c.PADDING)
+        self.brique_manager = BrM(self.canvas,
+                                  lignes = c.LIGNES, 
+                                  colonnes = c.COLONNES,
+                                  largeur_brique = c.LARGEUR_BRIQUE, 
+                                  hauteur_brique = c.HAUTEUR_BRIQUE,
+                                  top_offset = c.TOP_OFFSET, 
+                                  padding = c.PADDING)
         
         #Reinitialise la balle au-dessus de la raquette
-        self.balle.reset(x=self.raquette.get_x_center(), y=self.raquette.y - 30)
+        self.balle.reset(x = self.raquette.get_x_center(), y = self.raquette.y - 30)
         
         #Mise à jour graphique de la raquette (au cas où)
         self.update_raquette_graphics()
@@ -743,6 +762,8 @@ class FenetreJeu(ttk.Frame):
     def supprimer_dernier_score(self):
         """
         Fonction : Retire le dernier score sauvegardé (pile LIFO)
+        Entree : None
+        Sortie : None
         """
         if not self.historique_scores:
             messagebox.showinfo("Aucun score précédent à annuler.")
@@ -754,56 +775,62 @@ class FenetreJeu(ttk.Frame):
 
     def afficher_message_bonus(self, texte):
         """
-        Affiche un message temporaire au centre du canvas.
+        Fonction : Affiche un message temporaire au centre du canvas
+        Entree : Le texte à afficher en fonction du bonus
+        Sortie : None
         """
+        #Recuperation des dimensions
         largeur = self.canvas.winfo_width()
         hauteur = self.canvas.winfo_height()
-        message_id = self.canvas.create_text(
-            largeur / 2,
-            hauteur / 2,
-            text=texte,
-            font=("Arial", 18, "bold"),
-            fill="yellow"
-        )
-        # Le message disparaît après 2 secondes
+
+        #Creation du message
+        message_id = self.canvas.create_text(largeur / 2,
+                                             hauteur / 2,
+                                             text = texte,
+                                             font = ("Arial", 18, "bold"),
+                                             fill = "yellow")
+        
+        #Le message disparaît après 2 secondes
         self.after(2000, lambda: self.canvas.delete(message_id))
 
     def grossir_balle(self):
         """
-        Bonus : fait grossir la balle temporairement (5 secondes)
-        Utilise la même méthode que dans le menu Option.
+        Fonction : Fait grossir la balle temporairement pendant 5 secondes si ce bonus 
+        est activé; Utilise la même méthode que dans le menu Option
+        Entree : None
+        Sortie : None
         """
-        #1.5x plus grand)
+        #Rayon 1.5x plus grand
         nouveau_rayon = int(c.RAYON_BALLE * 1.5)
         c.RAYON_BALLE = nouveau_rayon 
 
-        # Redessiner la balle avec le nouveau rayon
+        #Redessiner la balle avec le nouveau rayon
         x, y = self.balle.x, self.balle.y
-        self.canvas.coords(
-            self.balle.id,
-            x - nouveau_rayon,
-            y - nouveau_rayon,
-            x + nouveau_rayon,
-            y + nouveau_rayon
-        )
+        self.canvas.coords(self.balle.id,
+                           x - nouveau_rayon,
+                           y - nouveau_rayon,
+                           x + nouveau_rayon,
+                           y + nouveau_rayon)
         self.balle.rayon = nouveau_rayon
-        # Rétablir après 5 secondes
+
+        #Rétablir la balle normale après 5 secondes
         self.after(5000, self.reduire_balle)
 
     def reduire_balle(self):
         """
-        Rétablit la taille normale de la balle après grossissement.
+        Fonction : Rétablit la taille normale de la balle après grossissement
+        Entree : None
+        Sortie : None
         """
-        # Rayon normal depuis les constantes
+        #Rayon normal depuis les constantes
         rayon_normal = int(c.RAYON_BALLE / 1.5)
         c.RAYON_BALLE = rayon_normal
 
+        #Redessiner la balle avec le nouveau rayon
         x, y = self.balle.x, self.balle.y
-        self.canvas.coords(
-            self.balle.id,
-            x - rayon_normal,
-            y - rayon_normal,
-            x + rayon_normal,
-            y + rayon_normal
-        )
+        self.canvas.coords(self.balle.id,
+                           x - rayon_normal,
+                           y - rayon_normal,
+                           x + rayon_normal,
+                           y + rayon_normal)
         self.balle.rayon = rayon_normal
