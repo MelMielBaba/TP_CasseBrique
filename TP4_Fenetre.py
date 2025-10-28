@@ -76,6 +76,8 @@ class FenetreDemarrage(ttk.Frame):
         # Boutons
         ttk.Button(self, text="Jouer", command=lambda: app.show_frame("FenetreJeu")).pack(pady=10)
         ttk.Button(self, text="Options", command=lambda: app.show_frame("FenetreOption")).pack(pady=10)
+        ttk.Button(self, text="Historique", command=lambda: app.frames["FenetreJeu"].afficher_historique_scores()).pack(pady=10)
+
         ttk.Button(self, text="Quitter", command=app.destroy).pack(pady=10)
 
 
@@ -170,7 +172,8 @@ class FenetreJeu(ttk.Frame):
         bottom_bar = ttk.Frame(self, padding=(8, 8))
         bottom_bar.pack(side="bottom", fill="x")
 
-        ttk.Button(bottom_bar, text="Annuler Score", command=self.supprimer_dernier_score).pack(side="left", padx=6)
+
+        ttk.Button(bottom_bar, text="Historique Scores", command=self.afficher_historique_scores).pack(side="left", padx=6)
         ttk.Button(bottom_bar, text="Retour", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
         ttk.Button(bottom_bar, text="Quitter", command=app.destroy).pack(side="left", padx=6)
 
@@ -345,6 +348,17 @@ class FenetreJeu(ttk.Frame):
         # Le message disparaît après 2 secondes
         self.after(2000, lambda: self.canvas.delete(message_id))
 
+    def afficher_historique_scores(self):
+        """Affiche les derniers scores enregistrés dans la pile (LIFO)."""
+        if not self.historique_scores:
+            messagebox.showinfo("Historique", "Aucun score enregistré pour le moment.")
+            return
+
+        # Affichage du contenu de la pile (LIFO = dernier en premier)
+        texte = "\n".join([f"{i+1}. {score}" for i, score in enumerate(reversed(self.historique_scores))])
+        messagebox.showinfo("Historique scores", f"Scores récents :\n\n{texte}")
+
+
     def grossir_balle(self):
         """
         Bonus : fait grossir la balle temporairement (5 secondes)
@@ -394,20 +408,9 @@ class FenetreJeu(ttk.Frame):
         """ 
         self.running = False 
         messagebox.showinfo("Game Over", f"Game over!\nScore: {self.score}") 
+        # ajout de l'enregistrement du score dans la pile
+        self.historique_scores.append(self.score)
         self.restart_game()
-
-    def supprimer_dernier_score(self):
-        """
-        Fonction : Retire le dernier score sauvegardé (pile LIFO)
-        """
-        if not self.historique_scores:
-            messagebox.showinfo("Aucun score précédent à annuler.")
-            return
-        ancien_score = self.historique_scores.pop()
-        self.score = ancien_score
-        self.score_var.set(f"Score : {self.score}")
-        messagebox.showinfo("Historique", f"Score précédent restauré : {ancien_score}")
-
 
     def restart_game(self):
         self.after(1000)
@@ -444,6 +447,7 @@ class FenetreJeu(ttk.Frame):
 
         if self.brique_manager.reste() == 0:
             messagebox.showinfo("Victoire", f"Bravo ! Ton score:\nScore: {self.score}")
+            self.historique_scores.append(self.score)
             self.restart_game()
             return
 
