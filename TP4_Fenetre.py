@@ -148,7 +148,7 @@ class FenetreDemarrage(ttk.Frame):
         self.canvas.pack(pady=6)
 
         #Affichage de l'image dès l'initialisation
-        self.ouvrir_image()
+        #self.ouvrir_image()
     
     def ouvrir_image(self):
         """
@@ -325,9 +325,19 @@ class FenetreJeu(ttk.Frame):
                 modifiables (nb lignes de briques, nb de colonnes de briques, largeur 
                 d'une brique, hauteur d'une brique, vie d'une brique, vitesse de la balle, 
                 facteur d'acceleration)
-    Methodes : > apply_changes() : permet de modifier les parametres lorqu'il est modifié
-               > reset_defaults() : permet de remettre les parametre a leur valeur 
-               d'origine
+    Methodes : > on_show() : passe la fenetre en visible et de (re)prendre le jeu
+               > on_hide() : met le jeu en pause si on quitte la fenetre
+               > _schedule_next_frame() : planifie la prochaine itération de boucle et 
+               conserve l'id
+               > souris_mouvement(event) : gestion des deplacement de la raquette avec la 
+               souris
+               > update_raquette_graphics() : mise a jour du dessin de la raquette
+               > check_collisions() : Verification des collisions
+               > game_over() : Gestion de fin de partie en cas de defaite
+               > restart_game() : Recreer une nouvelle partie sans la lancer
+               > game_loop() : Boucle principale de jeu
+               > lancer_game() : Lancement du jeu via un bouton
+               > arreter_game() : Met le jeu en pause
     """
     def __init__(self, parent, app):
         #Heritage du module et reference a la fenetre tkinter App()
@@ -341,6 +351,11 @@ class FenetreJeu(ttk.Frame):
         """Bas - Boutons"""
         bottom_bar = ttk.Frame(self, padding=(8, 8))
         bottom_bar.pack(side="bottom", fill="x")
+
+        #►PILE & FILE◄
+        """Pile pour enregistrement des scores; File pour les bonus des briques"""
+        self.historique_scores = []   # pile (LIFO)
+        self.file_bonus = deque()     # file (FIFO)
 
         #►SCORE◄
         """Initialisation & affichage"""
@@ -358,6 +373,7 @@ class FenetreJeu(ttk.Frame):
         ttk.Button(bottom_bar, text="RETOUR", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
         ttk.Button(bottom_bar, text="LANCER",command=self.lancer_game).pack(side="left", padx=6)
         ttk.Button(bottom_bar, text="PAUSE",command=self.arreter_game).pack(side="left", padx=6)
+        ttk.Button(bottom_bar, text="Annuler Score", command=self.supprimer_dernier_score).pack(side="left", padx=6)
         ttk.Button(bottom_bar, text="QUITTER", command=app.destroy).pack(side="left", padx=6)
 
         #►CANVAS◄
@@ -406,9 +422,6 @@ class FenetreJeu(ttk.Frame):
         Entree : None
         Sortie : None
         """
-        #Initialise le focus du canvas ici pour etre sur de recuperer les input clavier
-        self.canvas.focus_set()
-
         #Recréer le niveau si les constantes ont changé (comme avant)
         try:
             try:
@@ -546,8 +559,37 @@ class FenetreJeu(ttk.Frame):
         """Verification via le manager des briques"""
         hit = self.brique_manager.collision(self.balle)
 
-        """En cas de collision activer le rebond et mise a jour du score"""
+        """Si collision activer le rebond, verifier les bonus et mise a jour du score"""
         if hit is not None:
+            #1 chance sur 3 par brique cassée d’ajouter un bonus
+            if rd.randint(1,10) == 1:
+                self.file_bonus.append(rd.choice(["+1 vie","Accélération","Score x2","Balle+"]))
+            
+            #Traitement d'un bonus si présent
+            if self.file_bonus:
+                #Selection d'un bonus
+                bonus = self.file_bonus.popleft() # Fifo
+                self.afficher_message_bonus(bonus)
+
+                #◗Nouvelle vie◖
+                if bonus == "+1 vie":
+                    self.lives += 1
+                    self.lives_var.set(f"Vies : {self.lives}")
+                
+                #◗Acceleration◖
+                elif bonus == "Accélération":
+                    self.balle.aug_vitesse(1.1)
+
+                #◗Multiplication score◖
+                elif bonus == "Score x2":
+                    self.score *= 2
+                    self.score_var.set(f"Score : {self.score}")
+                
+                #◗Balle plus grosse◖
+                elif bonus == "Balle+":
+                    self.grossir_balle()
+
+            #Gestion du rebond et du score
             self.balle.rebond_y()
             self.score += 1
             self.score_var.set(f"Score : {self.score}")
@@ -618,37 +660,42 @@ class FenetreJeu(ttk.Frame):
         #Clear after id (car on est dans l'itération déclenchée)
         self._after_id = None
 
+        #Ne rien faire si en pause, mais ne pas boucler automatiquement
         if self.paused or not self.running:
-            # ne rien faire si en pause ; mais ne pas boucler automatiquement
             return
 
-        # logique cadre: déplacer la raquette graphique et la balle, collision, etc.
+        #Déplacer la raquette graphique, la balle & verifier collisions
         self.update_raquette_graphics()
         self.balle.move()
         self.check_collisions()
 
+        #Verification condition de victoire
         if self.brique_manager.reste() == 0:
             self.arreter_game()
             messagebox.showinfo("Victoire", f"Bravo ! Tu as détruit toutes les briques.\nScore: {self.score}")
-            self.restart_game()  # Prépare le nouveau niveau (sans le lancer)
+            self.restart_game()  #Prépare le nouveau niveau (sans le lancer)
             return
 
-        # replanifier prochain frame
+        #Replanifier prochain frame
         self._schedule_next_frame()
 
     def lancer_game(self):
         """
         Fonction : Active le jeu et s'assure qu'une itération est planifiée
         Entree : None
-        Sortie : 
+        Sortie : None
         """
+        #Passe le running est True
         self.running = True
-        # dépauser si besoin
+
+        #Enlever la pause si besoin
         self.paused = False
-        # Si aucune itération n'est planifiée, en créer une
+
+        #Si aucune itération n'est planifiée, en créer une
         if self._after_id is None:
             self._schedule_next_frame()
-        # donner le focus au canvas pour capter le clavier
+
+        #Donner le focus au canvas pour capter le clavier
         try:
             self.canvas.focus_set()
         except Exception:
@@ -659,15 +706,86 @@ class FenetreJeu(ttk.Frame):
         Fonction : Désactive le jeu et annule l'after en attente pour arrêter 
         proprement la boucle
         Entree : None
-        Sortie : 
+        Sortie : None
         """
+        #Passe le running en False
         self.running = False
-        # Optionnel : mettre en pause aussi
+
+        #Mettre en pause aussi (optionnel)
         self.paused = True
-        # annuler l'after s'il existe
+
+        #Annuler l'after s'il existe
         if self._after_id is not None:
             try:
                 self.after_cancel(self._after_id)
             except Exception:
                 pass
             self._after_id = None
+
+    def supprimer_dernier_score(self):
+        """
+        Fonction : Retire le dernier score sauvegardé (pile LIFO)
+        """
+        if not self.historique_scores:
+            messagebox.showinfo("Aucun score précédent à annuler.")
+            return
+        ancien_score = self.historique_scores.pop()
+        self.score = ancien_score
+        self.score_var.set(f"Score : {self.score}")
+        messagebox.showinfo("Historique", f"Score précédent restauré : {ancien_score}")
+
+    def afficher_message_bonus(self, texte):
+        """
+        Affiche un message temporaire au centre du canvas.
+        """
+        largeur = self.canvas.winfo_width()
+        hauteur = self.canvas.winfo_height()
+        message_id = self.canvas.create_text(
+            largeur / 2,
+            hauteur / 2,
+            text=texte,
+            font=("Arial", 18, "bold"),
+            fill="yellow"
+        )
+        # Le message disparaît après 2 secondes
+        self.after(2000, lambda: self.canvas.delete(message_id))
+
+    def grossir_balle(self):
+        """
+        Bonus : fait grossir la balle temporairement (5 secondes)
+        Utilise la même méthode que dans le menu Option.
+        """
+        #1.5x plus grand)
+        nouveau_rayon = int(c.RAYON_BALLE * 1.5)
+        c.RAYON_BALLE = nouveau_rayon 
+
+        # Redessiner la balle avec le nouveau rayon
+        x, y = self.balle.x, self.balle.y
+        self.canvas.coords(
+            self.balle.id,
+            x - nouveau_rayon,
+            y - nouveau_rayon,
+            x + nouveau_rayon,
+            y + nouveau_rayon
+        )
+        self.balle.rayon = nouveau_rayon
+        # Rétablir après 5 secondes
+        self.after(5000, self.reduire_balle)
+
+    def reduire_balle(self):
+        """
+        Rétablit la taille normale de la balle après grossissement.
+        """
+        # Rayon normal depuis les constantes
+        rayon_normal = int(c.RAYON_BALLE / 1.5)
+        c.RAYON_BALLE = rayon_normal
+
+        x, y = self.balle.x, self.balle.y
+        self.canvas.coords(
+            self.balle.id,
+            x - rayon_normal,
+            y - rayon_normal,
+            x + rayon_normal,
+            y + rayon_normal
+        )
+        self.balle.rayon = rayon_normal
