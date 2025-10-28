@@ -21,7 +21,8 @@ from TP4_Briques import BriqueManager
 
 #Importation des modules
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
+#from PIL import Image, ImageTk  # pour supporter JPEG
 
 #Constante de type str
 APP_TITLE = "Casse Brique"
@@ -116,6 +117,38 @@ class FenetreDemarrage(ttk.Frame):
         ttk.Button(bnt_barre, text="OPTIONS", command=lambda: app.show_frame("FenetreOption")).pack(side="left",padx=10)
         ttk.Button(bnt_barre, text="QUITTER", command=app.destroy).pack(side="left",padx=10)
 
+        self.photo = None #pour garder une reference
+        self.img_dict = {}
+        self.canvas = tk.Canvas(self, width=c.LARGEUR_CANVA, height=c.HAUTEUR_CANVA, bg="black")
+        self.canvas.pack(pady=6)
+
+        self.ouvrir_image()
+    
+    def ouvrir_image(self):
+        #filename = filedialog.askopenfilename(title="Ouvrir l'image", filetypes=[("Images JPEG","*.jpeg"),("Tous types","*.*")])
+
+        # Efface le canvas
+        self.canvas.delete("all")
+
+        # Demande un fichier image
+        filename = filedialog.askopenfilename(title="Ouvrir l'image",
+                                              filetypes=[("Images PNG", "*.png"), ("Tous types", "*.*")])
+
+        if not filename:
+            return  # annulation
+
+        self.photo = tk.PhotoImage(file=filename)
+    
+        # Conserve une référence pour éviter le garbage collection
+        self.img_dict[filename] = self.photo
+
+        # Affiche l'image en haut à gauche
+        self.canvas.create_image(0, 0, anchor=tk.NW, image=self.photo)
+
+        # Ajuste la taille du canvas
+        self.canvas.config(width=self.photo.width(), height=self.photo.height())
+
+
 
 class FenetreOption(ttk.Frame):
     """Fenêtre d'options: permet de modifier les constantes liées aux briques."""
@@ -158,7 +191,6 @@ class FenetreOption(ttk.Frame):
         ttk.Button(btn_row, text="RETOUR", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
         ttk.Button(btn_row, text="JOUER", command=lambda: app.show_frame("FenetreJeu")).pack(side="left", padx=6)
         ttk.Button(btn_row, text="QUITTER", command=app.destroy).pack(side="left", padx=6)
-
 
         # Aide / remarque
         ttk.Label(self, text="Les modifications s'appliquent quand tu retournes à la fenêtre du jeu.", foreground="gray").pack(pady=(8,0))
