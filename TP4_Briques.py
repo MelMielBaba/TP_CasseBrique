@@ -71,7 +71,7 @@ class BriqueManager:
         self.hauteur_brique = hauteur_brique
         self.top_offset = top_offset
         self.padding = padding
-        self.briques = []
+        self.briques = [] # LA LISTE QUI STOCK TOUTES LES BRIQUES DU NIVEAU
         self.creation_niveau()
 
     def creation_niveau(self):
