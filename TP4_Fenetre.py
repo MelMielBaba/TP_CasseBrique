@@ -677,6 +677,9 @@ class FenetreJeu(ttk.Frame):
                                   top_offset = c.TOP_OFFSET, 
                                   padding = c.PADDING)
         
+        #Remettre la raquette au centre
+        self.raquette.reset_raquette()
+
         #Reinitialise la balle au-dessus de la raquette
         self.balle.reset(x = self.raquette.get_x_center(), y = self.raquette.y - 30)
         

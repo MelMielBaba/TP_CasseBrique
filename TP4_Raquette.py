@@ -102,3 +102,18 @@ class Raquette:
         #Deplacement droite
         elif key in ('Right', 'd'):
             self.move_by(self.vitesse_raquette)
+    
+    def reset_raquette(self):
+        """
+        Fonction : Réinitialise la raquette à sa position de depart 
+        Entree : Deux entiers x et y 
+        Sortie : None
+        """
+        #Recuperation des information du canvas
+        canvas_w = c.LARGEUR_CANVA
+
+        #Repositionner la raquette au centre
+        centre_x = canvas_w / 2
+
+        #Modifier la position
+        self.set_x_center(centre_x)
