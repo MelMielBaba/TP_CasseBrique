@@ -50,6 +50,7 @@ Titre: Fichier README
     URL du git : https://github.com/MelMielBaba/TP_CasseBrique
     /!\ Le depot est paramétré comme privé et est censé être passé en public pour /!\
         évaluation 
+    /!\ Important l'archive du rendu correspond a la branche MelBr9 /!\
 =========================================================================================
 ►EMPLACEMENT DE LA LISTE,DE LA FILE ET DE LA PILE◄
     >> Liste : Dans ◊TP4_Briques◊ ligne n° ◊121◊
