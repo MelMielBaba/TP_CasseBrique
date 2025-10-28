@@ -104,10 +104,17 @@ class FenetreDemarrage(ttk.Frame):
         super().__init__(parent, padding=20)
         self.app = app
 
+        #Titre du jeu
         ttk.Label(self, text=APP_TITLE, font=("Arial", 24, "bold")).pack(pady=20)
-        ttk.Button(self, text="Jouer", command=lambda: app.show_frame("FenetreJeu")).pack(pady=10)
-        ttk.Button(self, text="Options", command=lambda: app.show_frame("FenetreOption")).pack(pady=10)
-        ttk.Button(self, text="Quitter", command=app.destroy).pack(pady=10)
+
+        #Barre des boutons
+        bnt_barre = ttk.Frame(self)
+        bnt_barre.pack(pady=12)
+
+        #Boutons
+        ttk.Button(bnt_barre, text="JOUER", command=lambda: app.show_frame("FenetreJeu")).pack(side="left",padx=10)
+        ttk.Button(bnt_barre, text="OPTIONS", command=lambda: app.show_frame("FenetreOption")).pack(side="left",padx=10)
+        ttk.Button(bnt_barre, text="QUITTER", command=app.destroy).pack(side="left",padx=10)
 
 
 class FenetreOption(ttk.Frame):
@@ -146,9 +153,12 @@ class FenetreOption(ttk.Frame):
         btn_row = ttk.Frame(self)
         btn_row.pack(pady=12)
 
-        ttk.Button(btn_row, text="Appliquer", command=self.apply_changes).pack(side="left", padx=6)
-        ttk.Button(btn_row, text="Réinitialiser valeurs par défaut", command=self.reset_defaults).pack(side="left", padx=6)
-        ttk.Button(btn_row, text="Retour", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
+        ttk.Button(btn_row, text="APPLIQUER", command=self.apply_changes).pack(side="left", padx=6)
+        ttk.Button(btn_row, text="REINITIALISER", command=self.reset_defaults).pack(side="left", padx=6)
+        ttk.Button(btn_row, text="RETOUR", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
+        ttk.Button(btn_row, text="JOUER", command=lambda: app.show_frame("FenetreJeu")).pack(side="left", padx=6)
+        ttk.Button(btn_row, text="QUITTER", command=app.destroy).pack(side="left", padx=6)
+
 
         # Aide / remarque
         ttk.Label(self, text="Les modifications s'appliquent quand tu retournes à la fenêtre du jeu.", foreground="gray").pack(pady=(8,0))
