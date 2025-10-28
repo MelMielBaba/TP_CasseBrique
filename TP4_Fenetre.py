@@ -257,7 +257,6 @@ class FenetreOption(ttk.Frame):
 
         #Boutons
         ttk.Button(btn_row, text = "APPLIQUER", command = self.apply_changes).pack(side = "left", padx = 6)
-        ttk.Button(btn_row, text = "REINITIALISER", command = self.reset_defaults).pack(side="left", padx = 6)
         ttk.Button(btn_row, text = "RETOUR", command = lambda: app.show_frame("FenetreDemarrage")).pack(side = "left", padx = 6)
         ttk.Button(btn_row, text = "JOUER", command = lambda: app.show_frame("FenetreJeu")).pack(side = "left", padx = 6)
         ttk.Button(btn_row, text = "QUITTER", command = app.destroy).pack(side = "left", padx = 6)
