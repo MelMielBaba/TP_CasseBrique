@@ -396,7 +396,7 @@ class FenetreJeu(ttk.Frame):
         #►BOUTONS◄
         ttk.Button(bottom_bar, text = "RETOUR", command = lambda: app.show_frame("FenetreDemarrage")).pack(side = "left", padx = 6)
         ttk.Button(bottom_bar, text = "LANCER",command = self.lancer_game).pack(side = "left", padx = 6)
-        ttk.Button(bottom_bar, text = "PAUSE",command = self.arreter_game).pack(side = "left", padx = 6)
+        ttk.Button(bottom_bar, text = "OPTIONS",command = lambda: app.show_frame("FenetreOption")).pack(side = "left", padx = 6)
         ttk.Button(bottom_bar, text = "HISTORIQUE", command = lambda: app.frames["FenetreJeu"].afficher_historique_scores()).pack(side = "left",padx = 10)
         ttk.Button(bottom_bar, text = "QUITTER", command = app.destroy).pack(side = "left", padx = 6)
 
