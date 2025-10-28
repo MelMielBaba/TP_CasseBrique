@@ -24,7 +24,10 @@ import math as m
 #►►CREATION OBJET BALLE◄◄
 class Balle:
     """
-    Fonction : Gere l'objet Balle
+    Fonction : Gere l'objet Balle; On initialise la balle, sur le canvas, avec une 
+    position x et y nulle; Le rayon de la balle/Vitesse correspond à une constante 
+    modifiable dans les paramètres; La couleur de la balle est blanche, elle n'est pas 
+    modifiable
     Attributs : > self.canvas : recupere le canvas
                 > self.rayon : recupere le rayon en constantes
                 > self.speed : recupere la vitesse en constantes
@@ -53,9 +56,9 @@ class Balle:
         self.rayon = rayon
         self.speed = vitesse
 
-        #Positions initiales
-        self.x = x if x is not None else float(canvas.winfo_reqwidth())/2
-        self.y = y if y is not None else float(canvas.winfo_reqheight()) - 120
+        #Vecteur position initial de la balle
+        self.x = x
+        self.y = y
 
         #Direction initiale 
         """Vers le haut, angle aléatoire"""
@@ -63,14 +66,16 @@ class Balle:
         self.vx = self.speed * m.cos(angle)
         self.vy = -abs(self.speed * m.sin(angle))
 
-        #Dessin
+        #Création de la balle graphiquement
         self.id = self.canvas.create_oval(self.x - rayon, self.y - rayon,
                                           self.x + rayon, self.y + rayon,
                                           fill=color, outline="black")
 
     def coords(self):
         """
-        Fonction : Renvoie les coordonnees graphiques de la balle
+        Fonction : Renvoie les coordonnees graphiques de la balle; permet de récupérer 
+        les "cotées" de la Balle par rapport au canvas et renvoie l = Left, t = Top,
+        r = Right, b = Bottom
         Entree : None
         Sortie : Les coordonnées graphique de la balle (INT)
         """
@@ -88,7 +93,7 @@ class Balle:
     def set_position(self, x:int, y:int):
         """
         Fonction : Modifie la position (logique & graphique) de la balle en fonction de 
-        deux entiers x et y
+        deux entiers x et y; Permet de déplacer la balle au dessus de la raquette
         Entrees : Deux entiers x et y (INT)
         Sortie : None
         """
@@ -118,17 +123,21 @@ class Balle:
 
     def aug_vitesse(self, factor=c.FACTOR):
         """
-        Fonction : Modifie les directions et la vitesse en fonction d'un facteur
+        Fonction : Modifie les directions et la vitesse en fonction d'un facteur; Prends 
+        en argument factor qui correspond à l'acceleration, que la balle prends à chaque 
+        frame, le vecteur vitesse est multiplié par un coef modifiable dans les options
         Entree : Un facteur d'accélération (FLOAT)
         Sortie : None
         """
-        self.vx *= factor
-        self.vy *= factor
-        self.speed *= factor
+        acc= (factor-1)/1000 + 1
+        self.vx *= acc
+        self.vy *= acc
+        self.speed *= acc
 
     def reset(self, x=None, y=None):
         """
-        Fonction : Réinitialise la balle à zero avec les parametres donnes au depart dans le __init__
+        Fonction : Réinitialise la balle à zero avec les parametres donnes au depart dans 
+        le __init__; permet de replacer la balle après une perte de vie
         Entree : Deux entiers x et y 
         Sortie : None
         """
@@ -150,7 +159,9 @@ class Balle:
 
     def move(self):
         """
-        Fonction : Gestion des deplacements de la balle
+        Fonction : Gestion des deplacements de la balle; Permet de calculer le vecteur 
+        position de la balle donc mettre a jour sa position dans l'espace a chaque 
+        frame/image
         Entree : None
         Sortie : None
         """
@@ -160,11 +171,3 @@ class Balle:
 
         #Deplacement graphique
         self.canvas.coords(self.id, self.x - self.rayon, self.y - self.rayon, self.x + self.rayon, self.y + self.rayon)
-
-    def position(self):
-        """
-        Fonction : Renvoie les coordonnees du centre de la balle
-        Entree : None
-        Sortie : Coordonnees du centre de la balle (TUPPLE)
-        """
-        return self.center()

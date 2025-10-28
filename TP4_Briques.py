@@ -20,7 +20,9 @@ import TP4_Constantes as c
 #►►CREATION OBJET BRIQUE◄◄
 class Brique:
     """
-    Fonction : Gere l'objet Brique
+    Fonction : Gere l'objet Brique; On initialise la Brique de longeur x2--x1 et de 
+    hauteur y2--y1 avec une couleur non modifiable, un nombre de vie modifiable, des 
+    paramètres et le type de brique
     Attributs : > self.canvas : recupere le canvas
                 > self.vies : recupere le nombre de pv de la brique en constantes
                 > self.type : recupere le type de la brique (exemple: normale) en 
@@ -46,37 +48,36 @@ class Brique:
     def toucher(self):
         """
         Fonction : Retire une vie a la brique si celle-ci n'est pas indestructible et la 
-        detruit si elle n'a plus de vies ou alors change sa couleur
+        detruit si elle n'a plus de vies ou alors change sa couleur; Activée lorsque la 
+        balle touche une brique, si la brique est de type indéstructible alors elle ne 
+        perd aucun point de vie sinon elle perd un point de vie
         Entree : None
         Sortie : Un booléen (TRUE ou FALSE)
         """
-        #Verification du type
+        #Vérification du type de brique
         if self.types == "indestructible":
             return False
-
-        #Enleve une vie a la brique
+        
+        #Retire une vie à la brique
         self.vies -= 1
 
-        #Si elle n'a plus de vie on la detruit
+        #Si la brique n'a plus de vie alors elle est détruite
         if self.vies <= 0:
             self.destroy()
             return True
         
-        #Sinon on change la couleur de la brique
+        #Sinon on change la couleur de la brique pour signaler qu'elle a été touchée
         else:
             self.canvas.itemconfig(self.id, fill = "orange")
             return False
 
     def destroy(self):
         """
-        Fonction : Detruit la brique graphique
+        Fonction : Supprime la brique graphique
         Entree : None
         Sortie : None
         """
-        try:
-            self.canvas.delete(self.id)
-        except Exception:
-            pass
+        self.canvas.delete(self.id)
 
     def coords(self):
         """
@@ -88,7 +89,12 @@ class Brique:
 #►►CREATION GESTIONNAIRE BRIQUES◄◄
 class BriqueManager:
     """
-    Fonction : Gere la creation et la gestion des briques presentes dans le jeu
+    Fonction : Gere la creation et la gestion des briques presentes dans le jeu; 
+    Gestionnaire du niveau, gère l'assemblement des briques entre-elles, prend en 
+    compte le nombre de lignes et de colonnes de briques que l'on veut,  modifiables 
+    dans les paramètres, les largeurs et hauteurs des briques; Le top offset 
+    correspond à l'espacement entre la 1er ligne du haut et la fin du canvas le 
+    padding correspond à l'espacement entre chaque brique
     Attributs : > self.canvas : recupere le canvas
                 > self.lignes : recupere le nombre de lignes en constantes
                 > self.colonnes : recupere le nombre de colonnes en constantes
@@ -117,8 +123,8 @@ class BriqueManager:
         self.top_offset = top_offset
         self.padding = padding
 
-        #Creation d'une liste contenant les briques
-        self.briques = []       #◊LISTE◊ [?]
+        #Creation d'une liste stockant les briques
+        self.briques = []       #◊LISTE◊
 
         #Creation d'une grille de brique dès l'initialisation
         self.creation_niveau()
@@ -126,17 +132,15 @@ class BriqueManager:
     def creation_niveau(self):
         """
         Fonction : Créer une grille de briques centrée en tenant compte des constantes;
-        Utilise les attributs de l'instance (self.lignes, self.colonnes, etc.) et 
-        retombe sur les constantes c.* si un attribut venait à manquer; Si la largeur 
-        totale dépasse celle du canvas, on adapte la largeur des briques pour que la 
-        grille tienne horizontalement
+        Pour aller plus loin, on peut créer plusieurs creation de niveau
         Entree : None
         Sortie : 
         """
         #Vide l'ancien niveau
         self.clear_all()
 
-        #Récupérer paramètres (fallback vers constantes)
+        #Récupérer paramètres 
+        """définies dans __init__ avec getattr(objet,attribut)"""
         lignes = getattr(self, "lignes", c.LIGNES)
         colonnes = getattr(self, "colonnes", c.COLONNES)
         largeur_brique = getattr(self, "largeur_brique", c.LARGEUR_BRIQUE)
@@ -162,7 +166,7 @@ class BriqueManager:
         start_x = max(int((canvas_w - total_width) / 2), 10)
         y = top_offset
 
-        #Palette de couleurs (tu peux la modifier)
+        #Palette de couleurs
         colors = ["#5e3ce7"]
 
         #Création de la grille
@@ -192,7 +196,7 @@ class BriqueManager:
 
     def reste(self):
         """
-        Fonction : Retourne la longeur de la liste de briques
+        Fonction : Retourne la longeur de la liste de briques restantes
         Entree : None
         Sortie : La longeur de la liste de briques (INT)"""
         return len(self.briques)
@@ -219,7 +223,7 @@ class BriqueManager:
             #Separation des coordonnees en 4 variables pour faire les verifications
             x1, y1, x2, y2 = coords
 
-            #On verifie la correspondance des coordonnees
+            #On verifie la superposition des coordonnees
             if not (bx2 < x1 or bx1 > x2 or by2 < y1 or by1 > y2):
                 destroyed = brique.toucher()
                 if destroyed:
@@ -228,6 +232,4 @@ class BriqueManager:
                     except ValueError:
                         pass
                 hit_brick = brique
-                #ne casse pas la boucle : gérer potentiellement plusieurs collisions (mais une suffit)
-                break
         return hit_brick

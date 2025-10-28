@@ -9,9 +9,10 @@ Projet: TP4 - CasseBrique
 Titre: Fichier principal de la gestion du jeu
 =========================================================================================
 Description :
-    Fichier principal pour lancer le Casse-Brique (version avec options modifiables).
-    Utilise les constantes de TP4_Constantes.py,
-    Cree les instances issues des fichier: TP4_Raquette.py, TP4_Balle.py, TP4_Briques.py.
+    Fichier principal du fonctionnement du Casse-Brique (version avec options modifiables)
+    et de la gestion graphique tkinter;
+    Utilise les constantes de TP4_Constantes.py;
+    Cree les instances issues des fichier: TP4_Raquette.py, TP4_Balle.py, TP4_Briques.py;
 =========================================================================================
 """
 
@@ -62,7 +63,7 @@ class App(tk.Tk):
         Entree : Le nom de la fenetre a afficher
         Sortie : None
         """
-        #Recuperation de la fenetre d'avant ?
+        #Recuperation de la fenetre d'avant 
         prev = getattr(self, "_current_frame_name", None)
 
         #Appeler on_hide sur la frame précédente si elle a la méthode
@@ -76,34 +77,18 @@ class App(tk.Tk):
 
         #Recuperation de la fenetre a afficher maintenant
         frame = self.frames.get(name)
-        if frame is None:
-            return
-        
         frame.tkraise()
 
-        # store current
+        #Recuperation de la frame courante
         self._current_frame_name = name
 
-        # appeler on_show sur la frame affichée si définie
+        #Appeler on_show sur la frame affichée si définie
         if hasattr(frame, "on_show") and callable(frame.on_show):
-            try:
-                frame.on_show()
-            except Exception as e:
-                print("Erreur on_show:", e)
+            frame.on_show()
 
-        frame = self.frames.get(name)
-        if frame is None:
-            return
-        
-        frame.tkraise()
-
-        # si la frame a un hook on_show, l'appeler pour rafraîchir son état
+        #Si la frame a un hook on_show, l'appeler pour rafraîchir son état
         if hasattr(frame, "on_show") and callable(getattr(frame, "on_show")):
-            try:
-                frame.on_show()
-            except Exception as e:
-                # log simple (print) pour debug, mais on continue
-                print("Erreur on_show:", e)
+             frame.on_show()
 
 #►►CREATION FENETRE DE DEMARRAGE◄◄
 class FenetreDemarrage(ttk.Frame):
@@ -453,37 +438,27 @@ class FenetreJeu(ttk.Frame):
         Sortie : None
         """
         #Recréer le niveau si les constantes ont changé (comme avant)
-        try:
-            try:
-                self.brique_manager.clear_all()
-            except Exception:
-                pass
+        self.brique_manager.clear_all()
 
-            #Réarranger les briques
-            self.brique_manager = BrM(self.canvas,
-                                      lignes = c.LIGNES, 
-                                      colonnes = c.COLONNES,
-                                      largeur_brique = c.LARGEUR_BRIQUE, 
-                                      hauteur_brique = c.HAUTEUR_BRIQUE,
-                                      top_offset = c.TOP_OFFSET, 
-                                      padding = c.PADDING)
-            
-            try:
-                self.canvas.delete(self.balle.id)
-            except Exception:
-                pass
+        #Réarranger les briques
+        self.brique_manager = BrM(self.canvas,
+                                    lignes = c.LIGNES, 
+                                    colonnes = c.COLONNES,
+                                    largeur_brique = c.LARGEUR_BRIQUE, 
+                                    hauteur_brique = c.HAUTEUR_BRIQUE,
+                                    top_offset = c.TOP_OFFSET, 
+                                    padding = c.PADDING)
+        
+        self.canvas.delete(self.balle.id)
 
-            #Repositionne la balle au-dessus de la raquette en lui appliquant les nouveaux parametres
-            self.balle = Bl(self.canvas, 
-                            x = self.raquette.get_x_center(), 
-                            y = self.raquette.y - 30, 
-                            rayon = c.RAYON_BALLE)
-            
-            #Mise a jour du dessin
-            self.update_raquette_graphics()
-
-        except Exception as e:
-            print("Erreur on_show FenetreJeu:", e)
+        #Repositionne la balle au-dessus de la raquette en lui appliquant les nouveaux parametres
+        self.balle = Bl(self.canvas, 
+                        x = self.raquette.get_x_center(), 
+                        y = self.raquette.y - 30, 
+                        rayon = c.RAYON_BALLE)
+        
+        #Mise a jour du dessin
+        self.update_raquette_graphics()
 
         #Reprise du jeu : dépauser et lancer la boucle si nécessaire
         self.paused = False
@@ -501,10 +476,7 @@ class FenetreJeu(ttk.Frame):
 
         #Annuler l'after en attente pour que rien ne tourne en arrière-plan
         if self._after_id is not None:
-            try:
-                self.after_cancel(self._after_id)
-            except Exception:
-                pass
+            self.after_cancel(self._after_id)
             self._after_id = None
 
     def _schedule_next_frame(self):
