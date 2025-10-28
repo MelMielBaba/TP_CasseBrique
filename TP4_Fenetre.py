@@ -1,39 +1,44 @@
 # -*- coding: utf-8 -*-
+
+#►►EN-TÊTE◄◄
 """
+=========================================================================================
 Date de creation : 7 octobre 2025
 Auteurs: Marie Louise MILLIEN & Elouen WURMSER
 Projet: TP4 - CasseBrique
 Titre: Fichier principal de la gestion du jeu
-"""
-
-"""
+=========================================================================================
 Description :
     Fichier principal pour lancer le Casse-Brique (version avec options modifiables).
     Utilise : TP4_Constantes.py,
     Cree les instances issues des fichier: TP4_Raquette.py, TP4_Balle.py, TP4_Briques.py
+=========================================================================================
 """
 
-#Importation des fichiers
+#►►IMPORTATIONS◄◄
+"""Importation des fichiers"""
 import TP4_Constantes as c
 from TP4_Raquette import Raquette
 from TP4_Balle import Balle
 from TP4_Briques import BriqueManager
 
-#Importation des modules
+"""Importation des modules"""
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
+from collections import deque
+import random as rd
 #from PIL import Image, ImageTk  # pour supporter JPEG
 
-#Constante de type str
+#►►CONSTANTES STR◄◄
 APP_TITLE = "Casse Brique"
 
-#Creation de la classe qui gere les differentes fenetres
+#►►CREATION GESTIONNAIRE FENETRE TKINTER◄◄
 class App(tk.Tk):
     """
     Fonction : Herite de tk.Tk() et gere la creation de la fenetre tkinter dans 
     laquelle evolue les differents ecrans
-    Attributs : self.frames le dictionnaire des objets des fenetres
-    Methodes : show_frame(name) permet d'afficher la fenetre dont on donne le nom
+    Attributs : > self.frames : le dictionnaire des objets des fenetres
+    Methodes : > show_frame(name) : permet d'afficher la fenetre dont on donne le nom
     """
     def __init__(self):
         #Creation de la fenetre tkinter
@@ -77,7 +82,9 @@ class App(tk.Tk):
         frame = self.frames.get(name)
         if frame is None:
             return
+        
         frame.tkraise()
+
         # store current
         self._current_frame_name = name
 
@@ -87,10 +94,13 @@ class App(tk.Tk):
                 frame.on_show()
             except Exception as e:
                 print("Erreur on_show:", e)
+
         frame = self.frames.get(name)
         if frame is None:
             return
+        
         frame.tkraise()
+
         # si la frame a un hook on_show, l'appeler pour rafraîchir son état
         if hasattr(frame, "on_show") and callable(getattr(frame, "on_show")):
             try:
@@ -99,9 +109,23 @@ class App(tk.Tk):
                 # log simple (print) pour debug, mais on continue
                 print("Erreur on_show:", e)
 
-#Classe de la fenetre de demarrage
+#►►CREATION FENETRE DE DEMARRAGE◄◄
 class FenetreDemarrage(ttk.Frame):
+    """
+    Fonction : Herite de ttk.Frame, qui est un module de tkinter, et gere la creation de 
+    l'ecran/la fenetre/le frame qui s'affiche au demarrage du jeu; Cette fentetre possede 
+    un bouton QUITTER, un bouton OPTIONS pour acceder au menu des options, et un bouton 
+    JOUER pour acceder a la fenetre de jeu; Les boutons sont placer sur une barre et une 
+    image de fond est prevue pour s'afficher en-dessous grace a un canvas (cette idée 
+    n'est pour le moment pas aboutie ni opérationnelle)
+    Attributs : > self.app : reference a la fenetre tkinter de App() [?]
+                > self.photo : la reference de l'image dans tkinter
+                > self.img_dict : le dictionnaire pour referer l'image
+                > self.canvas : le canvas pour placer l'image
+    Methodes : > ouvrir_image() : permet d'afficher l'image dans le canvas
+    """
     def __init__(self, parent, app):
+        #Heritage du module et reference a la fenetre tkinter App()
         super().__init__(parent, padding=20)
         self.app = app
 
@@ -117,14 +141,21 @@ class FenetreDemarrage(ttk.Frame):
         ttk.Button(bnt_barre, text="OPTIONS", command=lambda: app.show_frame("FenetreOption")).pack(side="left",padx=10)
         ttk.Button(bnt_barre, text="QUITTER", command=app.destroy).pack(side="left",padx=10)
 
+        #Gestion de l'image de fond
         self.photo = None #pour garder une reference
         self.img_dict = {}
         self.canvas = tk.Canvas(self, width=c.LARGEUR_CANVA, height=c.HAUTEUR_CANVA, bg="black")
         self.canvas.pack(pady=6)
 
+        #Affichage de l'image dès l'initialisation
         self.ouvrir_image()
     
     def ouvrir_image(self):
+        """
+        Fonction : 
+        Entree : None
+        Sortie : None
+        """
         #filename = filedialog.askopenfilename(title="Ouvrir l'image", filetypes=[("Images JPEG","*.jpeg"),("Tous types","*.*")])
 
         # Efface le canvas
@@ -148,32 +179,65 @@ class FenetreDemarrage(ttk.Frame):
         # Ajuste la taille du canvas
         self.canvas.config(width=self.photo.width(), height=self.photo.height())
 
-
-
+#►►CREATION FENETRE DU MENU DES OPTIONS◄◄
 class FenetreOption(ttk.Frame):
-    """Fenêtre d'options: permet de modifier les constantes liées aux briques."""
+    """
+    Fonction : Herite de ttk.Frame, qui est un module de tkinter, et gere la creation de 
+    l'ecran/la fenetre/le frame du menu des options; Cette fenetre permet 
+    de modifier les constantes liées aux briques ou a la balle; Le jeu a des parametres 
+    par defaut qui sont modifiables pour certains par ce menu comme par exemple le nombre 
+    de lignes ou de collonne de briques ou le rayon de la balle; Elle possede plusieurs 
+    bouton afin de soit APPLIQUER les parametres selectionnés, REINITIALISER les 
+    parametres par defaut, pouvoir faire un RETOUR au menu de demarrage ou QUITTER le jeu
+    Attributs : > self.app : reference a la fenetre tkinter de App() [?]
+                > self.sb_lignes, self.sb_colonnes, self.sb_largeur, self.sb_hauteur, 
+                self.sb_vies_b, self.sb_rayon_b, self.sb_factor: spinbox des parametre 
+                modifiables (nb lignes de briques, nb de colonnes de briques, largeur 
+                d'une brique, hauteur d'une brique, vie d'une brique, vitesse de la balle, 
+                facteur d'acceleration)
+    Methodes : > apply_changes() : permet de modifier les parametres lorqu'il est modifié
+               > reset_defaults() : permet de remettre les parametre a leur valeur 
+               d'origine
+    """
     def __init__(self, parent, app):
+        #Heritage du module et reference a la fenetre tkinter App()
         super().__init__(parent, padding=16)
         self.app = app
 
+        #Titre du menu
         ttk.Label(self, text="Options", font=("Arial", 20, "bold")).pack(pady=(0,12))
 
-        # Frame pour les paramètres de briques
+        #Frame pour placer les paramètres modifiable
         frame_params = ttk.Frame(self)
         frame_params.pack(pady=6, padx=6, fill="x")
 
-        # utilitaire pour créer ligne label + spinbox
+        #Fonction pour créer ligne label & spinbox
         def make_spin(parent, label_text, var_init, from_, to_, increment=1):
+            """
+            Fonction : Permettre d'eviter d'alourdir le code par la repetition des etapes 
+            pour ajouter une nouvelle ligne de parametre modifiable
+            Entrees : >Parent:La ou placer la ligne; >Label_text:texte a afficher; 
+                      >Var_init:la valeur initiale du parametre; >from_:valeur minimale 
+                      autorisée pour ce parametre; >to_:valeur maximale autorisée pour ce 
+                      parametre
+            Sortie : La variable sb, une Spinbox pour ce parametre
+            """
+            #on creer un frame pour placer la spinbox
             row = ttk.Frame(parent)
             row.pack(fill="x", pady=4)
+
+            #on ajoute un titre a la ligne
             ttk.Label(row, text=label_text, width=20, anchor="w").pack(side="left")
+
+            #on creer la spinbox
             sb = tk.Spinbox(row, from_=from_, to=to_, increment=increment, width=8)
             sb.pack(side="left")
             sb.delete(0, "end")
             sb.insert(0, str(var_init))
+
             return sb
 
-        # Spinboxes pour les constantes briques
+        #Spinboxes pour les paramètres modifiable
         self.sb_lignes = make_spin(frame_params, "Lignes (LIGNES)", c.LIGNES, 1, 30, 1)
         self.sb_colonnes = make_spin(frame_params, "Colonnes (COLONNES)", c.COLONNES, 1, 30, 1)
         self.sb_largeur = make_spin(frame_params, "Largeur brique (px)", c.LARGEUR_BRIQUE, 10, 300, 1)
@@ -182,23 +246,29 @@ class FenetreOption(ttk.Frame):
         self.sb_rayon_b = make_spin(frame_params, "Rayon de la balle", c.RAYON_BALLE, 5, 500, 1)
         self.sb_factor = make_spin(frame_params, "Accelerations",c.FACTOR,1,10,0.05)
 
-        # Boutons appliquer / réinitialiser / retour
+        #Barre où placer les boutons
         btn_row = ttk.Frame(self)
         btn_row.pack(pady=12)
 
+        #Boutons
         ttk.Button(btn_row, text="APPLIQUER", command=self.apply_changes).pack(side="left", padx=6)
         ttk.Button(btn_row, text="REINITIALISER", command=self.reset_defaults).pack(side="left", padx=6)
         ttk.Button(btn_row, text="RETOUR", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
         ttk.Button(btn_row, text="JOUER", command=lambda: app.show_frame("FenetreJeu")).pack(side="left", padx=6)
         ttk.Button(btn_row, text="QUITTER", command=app.destroy).pack(side="left", padx=6)
 
-        # Aide / remarque
-        ttk.Label(self, text="Les modifications s'appliquent quand tu retournes à la fenêtre du jeu.", foreground="gray").pack(pady=(8,0))
+        #Affichage d'un texte donnant des indications en remarques
+        ttk.Label(self, text="Les modifications s'appliquent quand on retourne à la fenêtre du jeu.", foreground="gray").pack(pady=(8,0))
 
     def apply_changes(self):
-        """Applique les valeurs des spinboxes aux constantes dans cstes (module c)."""
+        """
+        Fonction : Applique les valeurs des spinboxes aux constantes dans TP4_Constantes 
+        (module c)
+        Entree : None
+        Sortie : None
+        """
         try:
-            # lire et convertir
+            #Lire et convertir
             lignes = int(self.sb_lignes.get())
             colonnes = int(self.sb_colonnes.get())
             largeur = int(self.sb_largeur.get())
@@ -207,12 +277,13 @@ class FenetreOption(ttk.Frame):
             rayon_b = int(self.sb_rayon_b.get())
             factor = float(self.sb_factor.get())
 
-            # validate basic constraints
+            #Valider les contraintes basiques
             if lignes < 1 or colonnes < 1 or largeur < 4 or hauteur < 4:
                 messagebox.showwarning("Valeurs invalides", "Certaines valeurs sont trop petites.")
                 return
 
-            # appliquer dans le module cstes (cela prendra effet pour les nouvelles génération de niveau)
+            #Appliquer dans le module TP4_Constantes 
+            """(cela prendra effet pour les nouvelles génération de niveau)"""
             c.LIGNES = lignes
             c.COLONNES = colonnes
             c.LARGEUR_BRIQUE = largeur
@@ -221,12 +292,20 @@ class FenetreOption(ttk.Frame):
             c.RAYON_BALLE = rayon_b
             c.FACTOR = factor
 
-            messagebox.showinfo("Appliqué", "Paramètres appliqués. Retourne au jeu pour voir les changements.")
+            #Affichage d'un message de validation
+            messagebox.showinfo("Appliqué", "Paramètres appliqués. Retourner au jeu pour voir les changements.")
+        
+        #En cas d'erreur affiche un message
         except Exception as e:
             messagebox.showerror("Erreur", f"Impossible d'appliquer les paramètres : {e}")
 
     def reset_defaults(self):
-        """Réinitialise les spinboxes aux valeurs définies actuellement dans cstes (utile si on a fait des erreurs)."""
+        """
+        Fonction : Réinitialise les spinboxes aux valeurs définies initialement dans 
+        TP4_Constantes (utile si on a fait des erreurs)
+        Entree : None
+        Sortie : None
+        """
         self.sb_lignes.delete(0, "end"); self.sb_lignes.insert(0, str(c.LIGNES))
         self.sb_colonnes.delete(0, "end"); self.sb_colonnes.insert(0, str(c.COLONNES))
         self.sb_largeur.delete(0, "end"); self.sb_largeur.insert(0, str(c.LARGEUR_BRIQUE))
@@ -235,47 +314,63 @@ class FenetreOption(ttk.Frame):
         self.sb_rayon_b.delete(0, "end"); self.sb_rayon_b.insert(0, str(c.RAYON_BALLE))
         self.sb_factor.delete(0, "end"); self.sb_factor.insert(0, str(c.FACTOR))
 
-
+#►►CREATION FENETRE DU MENU DU JEU◄◄
 class FenetreJeu(ttk.Frame):
+    """
+    Fonction : Herite de ttk.Frame, qui est un module de tkinter, et gere la creation de 
+    l'ecran/la fenetre/le frame qui gere le jeu; 
+    Attributs : > self.app : reference a la fenetre tkinter de App() [?]
+                > self.sb_lignes, self.sb_colonnes, self.sb_largeur, self.sb_hauteur, 
+                self.sb_vies_b, self.sb_rayon_b, self.sb_factor: spinbox des parametre 
+                modifiables (nb lignes de briques, nb de colonnes de briques, largeur 
+                d'une brique, hauteur d'une brique, vie d'une brique, vitesse de la balle, 
+                facteur d'acceleration)
+    Methodes : > apply_changes() : permet de modifier les parametres lorqu'il est modifié
+               > reset_defaults() : permet de remettre les parametre a leur valeur 
+               d'origine
+    """
     def __init__(self, parent, app):
-        #Heritage de la fenetre tkinter
+        #Heritage du module et reference a la fenetre tkinter App()
         super().__init__(parent)
         self.app = app
 
-        #Barres d'affichage
-        #►Haut - Score et vies
+        #►BARRES D'AFFICHAGE◄
+        """Haut - Score et vies"""
         top_bar = ttk.Frame(self, padding=(8, 8))
         top_bar.pack(fill="x")
-        #►Bas - Boutons
+        """Bas - Boutons"""
         bottom_bar = ttk.Frame(self, padding=(8, 8))
         bottom_bar.pack(side="bottom", fill="x")
 
-        #Initiation du score et affichage
+        #►SCORE◄
+        """Initialisation & affichage"""
         self.score = 0
         self.score_var = tk.StringVar(value=f"Score : {self.score}")
         ttk.Label(top_bar, textvariable=self.score_var, font=("Arial", 12, "bold")).pack(side="left", padx=8)
 
-        #Initiation des vies et affichage
+        #►VIES◄
+        """Initialisation & affichage"""
         self.lives = c.NOMBRE_VIES
         self.lives_var = tk.StringVar(value=f"Vies : {self.lives}")
         ttk.Label(top_bar, textvariable=self.lives_var, font=("Arial", 12, "bold")).pack(side="left", padx=20)
 
-        #Creation des boutons
+        #►BOUTONS◄
         ttk.Button(bottom_bar, text="RETOUR", command=lambda: app.show_frame("FenetreDemarrage")).pack(side="left", padx=6)
         ttk.Button(bottom_bar, text="LANCER",command=self.lancer_game).pack(side="left", padx=6)
         ttk.Button(bottom_bar, text="PAUSE",command=self.arreter_game).pack(side="left", padx=6)
         ttk.Button(bottom_bar, text="QUITTER", command=app.destroy).pack(side="left", padx=6)
 
-        #Creation du canvas
+        #►CANVAS◄
         self.canvas = tk.Canvas(self, width=c.LARGEUR_CANVA, height=c.HAUTEUR_CANVA, bg="black")
         self.canvas.pack(pady=6)
 
-        #Initiation de la raquette & gestion des inputs
+        #►RAQUETTE◄
+        """Initialisation de la raquette & gestion des inputs"""
         self.raquette = Raquette(c.LARGEUR_CANVA, c.HAUTEUR_CANVA)
         self.canvas.bind('<Key>', self.raquette.deplacement_barre) #controle clavier
         #self.canvas.bind('<Motion>', self.souris_mouvement) #controle souris
 
-        #Dessin de la raquette (graphique)
+        """Dessin de la raquette (graphique)"""
         x_center = self.raquette.get_x_center()
         half = self.raquette.largeur_raquette / 2
         y = self.raquette.y
@@ -285,19 +380,25 @@ class FenetreJeu(ttk.Frame):
             fill="red"
         )
 
-        #Briques & balle — instanciation initiale (ne démarre pas la boucle)
+        #►BRIQUES◄
+        """Instanciation initiale (ne démarre pas la boucle)"""
         self.brique_manager = BriqueManager(self.canvas,
                                            lignes=c.LIGNES, colonnes=c.COLONNES,
                                            largeur_brique=c.LARGEUR_BRIQUE, hauteur_brique=c.HAUTEUR_BRIQUE,
                                            top_offset=c.TOP_OFFSET, padding=c.PADDING)
+        
+        #►BALLE◄
+        """Instanciation initiale (ne démarre pas la boucle)"""
         self.balle = Balle(self.canvas, x=x_center, y=y - 30)
 
-        #Etat jeu
-        self.running = False         # indique que le jeu est actif (non game-over)
-        self.paused = True          # << important : start en pause (car l'écran d'accueil est probablement visible)
+        #►ETAT DU JEU◄
+        """Running & pause"""
+        self.running = False    #Indication jeu actif (non game-over)
+        self.paused = True      #Initialisation en pause (écran demarrage probablement visible)
+        """Delai de mise a jour de la boucle"""
         self.delay = c.FPS_DELAY_MS
-        self._after_id = None       # stockage de l'ID retourné par after pour pouvoir annuler
-        # NE PAS appeler self.after ici : on démarrera la boucle dans on_show()
+        self._after_id = None   #Stockage de l'ID retourné par after pour pouvoir annuler
+        #/!\NE PAS appeler self.after ici : on démarrera la boucle dans on_show()/!\
 
     def on_show(self):
         """
@@ -305,8 +406,9 @@ class FenetreJeu(ttk.Frame):
         Entree : None
         Sortie : None
         """
-        #On demarre le focus du canvas ici pour etre sur qu'il 'ecoute' bien les input clavier
+        #Initialise le focus du canvas ici pour etre sur de recuperer les input clavier
         self.canvas.focus_set()
+
         #Recréer le niveau si les constantes ont changé (comme avant)
         try:
             try:
@@ -345,8 +447,10 @@ class FenetreJeu(ttk.Frame):
         Entree : None
         Sortie : None
         """
+        #Met le jeu en etat de pause
         self.paused = True
-        # annuler l'after en attente pour que rien ne tourne en arrière-plan
+
+        #Annuler l'after en attente pour que rien ne tourne en arrière-plan
         if self._after_id is not None:
             try:
                 self.after_cancel(self._after_id)
@@ -394,22 +498,25 @@ class FenetreJeu(ttk.Frame):
         Entree : None
         Sortie : None
         """
-        #Collisions des murs
+        #COLLISIONS DES MURS
         l, t, r, b = self.balle.coords()
-        #rebond gauche
+
+        #◗rebond gauche◖
         if l <= 0:
             self.balle.rebond_x()
             self.balle.x = self.balle.rayon
-        #rebond droite
+
+        #◗rebond droite◖
         elif r >= c.LARGEUR_CANVA:
             self.balle.rebond_x()
             self.balle.x = c.LARGEUR_CANVA - self.balle.rayon
-        #rebond haut
+
+        #◗rebond haut◖
         elif t <= 0:
             self.balle.rebond_y()
             self.balle.y = self.balle.rayon
 
-        #rebond bas -> perte de vie
+        #◗rebond bas : perte de vie◖
         elif b >= c.HAUTEUR_CANVA:
             self.lives -= 1
             self.lives_var.set(f"Vies : {self.lives}")
@@ -420,9 +527,12 @@ class FenetreJeu(ttk.Frame):
                 self.balle.reset(x=self.raquette.get_x_center(), y=self.raquette.y - 30)
                 return
 
-        #Collisions avec la raquette
+        #COLLISIONS AVEC LA RAQUETTE
+        """Recuperation des coins des deux objets"""
         rx1, ry1, rx2, ry2 = self.canvas.coords(self.raillet)
         bx1, by1, bx2, by2 = self.balle.coords()
+
+        """Verification de la collision"""
         if not (bx2 < rx1 or bx1 > rx2 or by2 < ry1 or by1 > ry2):
             self.balle.rebond_y()
             ball_cx = (bx1 + bx2) / 2
@@ -432,8 +542,11 @@ class FenetreJeu(ttk.Frame):
             self.balle.vx += delta * max_horizontal
             self.balle.y = ry1 - self.balle.rayon - 1
 
-        #Collision avec les briques
+        #COLLISIONS AVEC LES BRIQUES
+        """Verification via le manager des briques"""
         hit = self.brique_manager.collision(self.balle)
+
+        """En cas de collision activer le rebond et mise a jour du score"""
         if hit is not None:
             self.balle.rebond_y()
             self.score += 1
@@ -448,7 +561,7 @@ class FenetreJeu(ttk.Frame):
         """
         self.arreter_game()
         messagebox.showinfo("Game Over", f"Game over!\nScore: {self.score}")
-        # On recrée un niveau prêt à jouer, mais en pause
+        #On recrée un niveau prêt à jouer, mais en pause
         self.restart_game()
 
     def restart_game(self):
@@ -469,7 +582,8 @@ class FenetreJeu(ttk.Frame):
             self.brique_manager.clear_all()
         except Exception:
             pass
-
+        
+        #Creation d'un nouveau gestionnaire de briques
         self.brique_manager = BriqueManager(self.canvas,
                                            lignes=c.LIGNES, colonnes=c.COLONNES,
                                            largeur_brique=c.LARGEUR_BRIQUE, hauteur_brique=c.HAUTEUR_BRIQUE,
@@ -478,19 +592,21 @@ class FenetreJeu(ttk.Frame):
         #Reinitialise la balle au-dessus de la raquette
         self.balle.reset(x=self.raquette.get_x_center(), y=self.raquette.y - 30)
         
-        # Mise à jour graphique de la raquette (au cas où)
+        #Mise à jour graphique de la raquette (au cas où)
         self.update_raquette_graphics()
 
-        # On stoppe la boucle (pas de mouvement)
+        #On stoppe la boucle (pas de mouvement)
         self.paused = True
         self.running = False
 
-        # S'assurer qu'aucun after ne reste planifié
+        #S'assurer qu'aucun after ne reste planifié
         if self._after_id is not None:
             try:
                 self.after_cancel(self._after_id)
             except Exception:
                 pass
+        
+        #Passe l'after a None [?]
         self._after_id = None
 
     def game_loop(self):
@@ -499,7 +615,7 @@ class FenetreJeu(ttk.Frame):
         Entree : None
         Sortie : None
         """
-        # clear after id (car on est dans l'itération déclenchée)
+        #Clear after id (car on est dans l'itération déclenchée)
         self._after_id = None
 
         if self.paused or not self.running:
