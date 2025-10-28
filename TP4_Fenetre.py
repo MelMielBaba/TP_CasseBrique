@@ -134,6 +134,7 @@ class FenetreDemarrage(ttk.Frame):
         #Boutons
         ttk.Button(bnt_barre, text = "JOUER", command = lambda: app.show_frame("FenetreJeu")).pack(side = "left",padx = 10)
         ttk.Button(bnt_barre, text = "OPTIONS", command = lambda: app.show_frame("FenetreOption")).pack(side = "left",padx = 10)
+        ttk.Button(bnt_barre, text = "HISTORIQUE", command = lambda: app.frames["FenetreJeu"].afficher_historique_scores()).pack(side = "left",padx = 10)
         ttk.Button(bnt_barre, text = "QUITTER", command = app.destroy).pack(side = "left",padx = 10)
 
         #Gestion de l'image de fond
@@ -357,6 +358,10 @@ class FenetreJeu(ttk.Frame):
                > game_loop() : Boucle principale de jeu
                > lancer_game() : Lancement du jeu via un bouton
                > arreter_game() : Met le jeu en pause
+               > afficher_message_bonus(texte) : affiche quel bonus a été débloqué
+               > grossir_balle() : grossit la balle pour le bonus
+               > reduire_balle() : remet la balle initiale
+               > afficher_historique_scores() : permet d'acceder aux scores
     """
     def __init__(self, parent, app):
         #Heritage du module et reference a la fenetre tkinter App()
@@ -392,7 +397,7 @@ class FenetreJeu(ttk.Frame):
         ttk.Button(bottom_bar, text = "RETOUR", command = lambda: app.show_frame("FenetreDemarrage")).pack(side = "left", padx = 6)
         ttk.Button(bottom_bar, text = "LANCER",command = self.lancer_game).pack(side = "left", padx = 6)
         ttk.Button(bottom_bar, text = "PAUSE",command = self.arreter_game).pack(side = "left", padx = 6)
-        ttk.Button(bottom_bar, text = "Annuler Score", command = self.supprimer_dernier_score).pack(side = "left", padx = 6)
+        ttk.Button(bottom_bar, text = "HISTORIQUE", command = lambda: app.frames["FenetreJeu"].afficher_historique_scores()).pack(side = "left",padx = 10)
         ttk.Button(bottom_bar, text = "QUITTER", command = app.destroy).pack(side = "left", padx = 6)
 
         #►CANVAS◄
@@ -637,6 +642,10 @@ class FenetreJeu(ttk.Frame):
         """
         self.arreter_game()
         messagebox.showinfo("Game Over", f"Game over!\nScore: {self.score}")
+
+        #Ajout de l'enregistrement du score dans la pile
+        self.historique_scores.append(self.score)
+
         #On recrée un niveau prêt à jouer, mais en pause
         self.restart_game()
 
@@ -710,6 +719,7 @@ class FenetreJeu(ttk.Frame):
         if self.brique_manager.reste() == 0:
             self.arreter_game()
             messagebox.showinfo("Victoire", f"Bravo ! Tu as détruit toutes les briques.\nScore: {self.score}")
+            self.historique_scores.append(self.score) #Ajoute le score a l'historique
             self.restart_game()  #Prépare le nouveau niveau (sans le lancer)
             return
 
@@ -758,20 +768,6 @@ class FenetreJeu(ttk.Frame):
             except Exception:
                 pass
             self._after_id = None
-
-    def supprimer_dernier_score(self):
-        """
-        Fonction : Retire le dernier score sauvegardé (pile LIFO)
-        Entree : None
-        Sortie : None
-        """
-        if not self.historique_scores:
-            messagebox.showinfo("Aucun score précédent à annuler.")
-            return
-        ancien_score = self.historique_scores.pop()
-        self.score = ancien_score
-        self.score_var.set(f"Score : {self.score}")
-        messagebox.showinfo("Historique", f"Score précédent restauré : {ancien_score}")
 
     def afficher_message_bonus(self, texte):
         """
@@ -834,3 +830,17 @@ class FenetreJeu(ttk.Frame):
                            x + rayon_normal,
                            y + rayon_normal)
         self.balle.rayon = rayon_normal
+
+    def afficher_historique_scores(self):
+        """
+        Fonction : Affiche les derniers scores enregistrés dans la pile (LIFO)
+        Entree : None
+        Sortie : None
+        """
+        if not self.historique_scores:
+            messagebox.showinfo("Historique", "Aucun score enregistré pour le moment.")
+            return
+
+        #Affichage du contenu de la pile (LIFO = dernier en premier)
+        texte = "\n".join([f"{i+1}. {score}" for i, score in enumerate(reversed(self.historique_scores))])
+        messagebox.showinfo("Historique scores", f"Scores récents :\n\n{texte}")
